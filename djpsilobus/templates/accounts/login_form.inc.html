@@ -1,0 +1,65 @@
+            <h4 style="border-bottom: 1px solid #c5c5c5;">
+                <i class="glyphicon glyphicon-user"></i>
+                Account Access
+            </h4>
+            <div style="padding: 20px;" id="form-olvidado">
+                <form accept-charset="UTF-8" role="form" name="djauth"
+                    id="login-form" method="post"
+                    action="{{action|default:'.'}}">
+                    {% csrf_token %}
+                    <input type="hidden" name="next"
+                        value="{% if next %}{{ next }}{% endif %}">
+                    <fieldset>
+                        <div class="form-group input-group
+                            {% if form.username.errors %}
+                                has-error has-feedback
+                            {% endif %}">
+                            <span class="input-group-addon"> @ </span>
+                            <input class="form-control" placeholder="Username"
+                                name="username" id="id_username"
+                                autofocus="" value="{{form.data.username}}"
+                                maxlength="128" required="">
+                        </div>
+                        <div class="form-group input-group
+                            {% if form.password.errors %}
+                                has-error has-feedback
+                            {% endif %}">
+                            <span class="input-group-addon">
+                                <i class="glyphicon glyphicon-lock"> </i>
+                            </span>
+                            <input class="form-control" placeholder="Password"
+                                name="password" type="password" id="id_password"
+                                value="{{form.data.password}}" maxlength="64"
+                                required="">
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                Access
+                            </button>
+                            <p class="help-block">
+                                <a class="pull-right text-muted" href="#" id="olvidado">
+                                    <small>Forgot your password?</small>
+                                </a>
+                            </p>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <div style="display: none;" id="form-olvidado">
+                <h4 class="">Forgot your password?</h4>
+                <form accept-charset="UTF-8" role="form" id="login-recordar" method="post">
+                    <fieldset>
+                        <span class="help-block">
+                            If your password does not work, you can
+                            <a href="https://password.carthage.edu/pwm/public/ForgottenPassword" target="_blank">
+                            reset it
+                            </a> with your security questions and answers.
+                        </span>
+                        <p class="help-block">
+                            <a class="text-muted" href="#" id="acceso">
+                                <small>Go back to Account Access</small>
+                            </a>
+                        </p>
+                    </fieldset>
+                </form>
+            </div>

@@ -1,0 +1,34 @@
+{% for c in courses %}
+  <tr>
+    <td>{{c.obj.crs_no}}</td>
+    <td>{{c.obj.crs_title}}</td>
+    <td align="center">{{c.obj.sec_no}}</td>
+    <td>{{c.obj.fullname}}</td>
+    <td class="section" data-phile="{{c.phile}}" data-fullname="{{c.obj.fullname}}">
+      {% if c.obj.needsyllabi != 'Y' %}
+        Not required
+      {% else %}
+        {% if c.obj.fac_id == user.id %}
+          <input type="hidden" name="crs_no[]"
+            value="{{c.obj.crs_no}}">
+          <input type="hidden" name="crs_title[]"
+            value="{{c.obj.crs_title}}">
+          <input type="hidden" name="sec_no[]"
+            value="{{c.obj.sec_no}}">
+          <label for="id_syllabi_{{forloop.counter0}}">
+            <input type="file" value="add syllabus"
+              name="syllabi[]" class="syllabi"
+              id="id_syllabi_{{forloop.counter0}}">
+            <input type="hidden" name="syllabih[]" value="">
+          </label>
+          <label for="id_submit_{{forloop.counter0}}">
+            <input type="submit" name="submit_{{forloop.counter0}}"
+              value="Submit" id="id_submit_{{forloop.counter0}}">
+          </label>
+        {% else %}
+          No Syllabus
+        {% endif %}
+      {% endif %}
+    </td>
+  </tr>
+{% endfor %}
