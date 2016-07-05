@@ -30,9 +30,6 @@ def find_file(phile):
     }
 
     response = requests.post(EARL, data=json.dumps(req_dict), headers=HEADERS)
-    #print response.__dict__
-    #print response._content
-    #print response._content[0]["name"]
     jason = json.loads(response._content)
 
     return jason
