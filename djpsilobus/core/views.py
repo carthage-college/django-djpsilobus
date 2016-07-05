@@ -31,7 +31,7 @@ YEAR = "2016"
 SESS = "RA"
 
 @portal_auth_required(
-    "DSPILOBUS_AUTH", reverse_lazy("access_denied")
+    session_var="DSPILOBUS_AUTH", redirect_url=reverse_lazy("access_denied")
 )
 def home(request, dept=None):
     # current user
@@ -77,7 +77,7 @@ def home(request, dept=None):
             faculty_name = courses[0][11]
 
     secciones = []
-    if len(courses) > 0:
+    if courses and len(courses) > 0:
         for c in courses:
             lastname = re.sub('[^0-9a-zA-Z]+', '_', c.lastname)
             firstname = re.sub('[^0-9a-zA-Z]+', '_', c.firstname)
@@ -103,7 +103,6 @@ def home(request, dept=None):
                 syllabus = syllabi[len(syllabi)-h]
                 h -= 1
                 crs_no = request.POST.getlist('crs_no[]')[i]
-                dept = crs_no.split(" ")
                 crs_no_slug = crs_no.replace(" ", "_")
                 sec_no = request.POST.getlist('sec_no[]')[i]
                 crs_title = request.POST.getlist('crs_title[]')[i]
