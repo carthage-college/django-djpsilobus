@@ -8,16 +8,13 @@ sys.path.append('/usr/local/lib/python2.7/dist-packages/')
 sys.path.append('/data2/django_1.9/')
 sys.path.append('/data2/django_projects/')
 sys.path.append('/data2/django_third/')
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djpsilobus.nsettings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djpsilobus.settings")
 
 from django.conf import settings
 
 from djpsilobus.core.utils import find_file
 
 import argparse
-import json
-import requests
-
 
 # set up command-line options
 desc = """
