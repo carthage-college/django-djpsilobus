@@ -1,11 +1,11 @@
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import RequestContext
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 
-from djpsilobus.core.utils import find_file
+from djpsilobus.core.dspace import Search
 
 from djzbar.decorators.auth import portal_auth_required
 from djzbar.utils.informix import do_sql as do_esql
@@ -29,6 +29,7 @@ logger = logging.getLogger(__name__)
 # constants for now
 YEAR = "2016"
 SESS = "RA"
+TITLE_ALT = "dc.title.alternative"
 
 @portal_auth_required(
     session_var="DSPILOBUS_AUTH", redirect_url=reverse_lazy("access_denied")
@@ -62,7 +63,9 @@ def home(request, dept=None):
     if dept:
         # all faculty courses for department
         courses = sections(code=dept,year=YEAR,sess=SESS)
-        dept = department(dept)[0]
+        dept = department(dept)
+        if dept:
+            dept = dept[0]
     elif request.method == "POST" and not request.FILES:
         substr = "dept_faculty"
         for key,val in request.POST.iteritems():
@@ -73,11 +76,11 @@ def home(request, dept=None):
     if fid:
         # one faculty
         courses = sections(year=YEAR,sess=SESS,fid=fid)
-        if len(courses) > 0:
+        if courses:
             faculty_name = courses[0][11]
 
     secciones = []
-    if courses and len(courses) > 0:
+    if courses:
         for c in courses:
             lastname = re.sub('[^0-9a-zA-Z]+', '_', c.lastname)
             firstname = re.sub('[^0-9a-zA-Z]+', '_', c.firstname)
@@ -106,7 +109,7 @@ def home(request, dept=None):
                 crs_no_slug = crs_no.replace(" ", "_")
                 sec_no = request.POST.getlist('sec_no[]')[i]
                 crs_title = request.POST.getlist('crs_title[]')[i]
-                filename = "{}_{}_{}_{}_{}_{}".format(
+                filename = "{}_{}_{}_{}_{}_{}_syllabus".format(
                     YEAR, SESS, crs_no_slug, sec_no,
                     user.last_name, user.first_name
                 )
@@ -125,21 +128,29 @@ def home(request, dept=None):
     )
 
 
+@portal_auth_required(
+    session_var="DSPILOBUS_AUTH", redirect_url=reverse_lazy("access_denied")
+)
 @csrf_exempt
 def dspace_file_search(request):
-    jason = []
-    phile = request.POST.get("phile")
-    name = request.POST.get("name")
-    if name != "Staff":
-        jason = find_file(phile)
-    else:
-        logger.debug("name = {}".format(name))
-    response = ""
-    if len(jason) > 0 and jason[0].get("name"):
-        earl = "{}/bitstream/handle/{}/{}?sequence=1&isAllowed=y".format(
-            settings.DSPACE_URL, jason[0].get("handle"), phile
+    if request.method == "POST":
+        phile = request.POST.get("phile")
+        name = request.POST.get("name")
+
+        jason = []
+        response = ""
+        if name.strip() != "Staff":
+            s =  Search()
+            jason = s.file(phile, TITLE_ALT)
+
+        if jason and jason[0].get("name"):
+            earl = "{}/bitstream/handle/{}/{}?sequence=1&isAllowed=y".format(
+                settings.DSPACE_URL, jason[0].get("handle"), phile
+            )
+            response = '<a href="{}">View File</a>'.format(earl)
+        return HttpResponse(
+            response, content_type="text/plain; charset=utf-8"
         )
-        response = '<a href="{}">View File</a>'.format(earl)
-    return HttpResponse(
-        response, content_type="text/plain; charset=utf-8"
-    )
+    else:
+        return HttpResponseRedirect(reverse_lazy("access_denied"))
+
