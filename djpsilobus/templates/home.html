@@ -69,17 +69,22 @@ $(function(){
         select, input {margin-bottom:5px;}
         fieldset {
             border: 1px solid silver;
-            margin: 0 2px;
+            margin: 5px 2px;
             padding: .35em .625em .75em;
         }
         legend {
             display: block;
+            padding: 2px 10px !important;
+            border: 1px solid #dcdcdc;
+            border-radius: 10px;
+            background-color: #003c4b;
             padding: 0;
             margin-bottom: 0;
             width:initial;
-            color: #333;
-            border: 0;
+            color: #fff;
+            font-size:.9em;
         }
+        #toggle-departments {width:150px;}
         #notice {
             position:absolute; top:175px; left:300px; background-color:#880000;
             border:3px solid white; opacity: .80; filter:Alpha(Opacity=80);
@@ -95,7 +100,9 @@ $(function(){
       <h2>
         {% if depts %}
           You may view the following departments
-          <button id="toggle-departments" aria-expanded="true" data-toggle="collapse" type="button" class="btn btn-success collapsed" data-target="#departments">
+          <button id="toggle-departments" aria-expanded="true" type="button"
+            data-toggle="collapse" data-target="#departments"
+            class="btn btn-success collapsed">
             Hide Departments
           </button>
         {% else %}
@@ -121,7 +128,7 @@ $(function(){
                 <legend>{{d.dept.txt}}</legend>
                 <div class="form-row">
                   <label for="dept_faculty_{{d.dept.dept}}">
-                    View courses for:
+                    View all courses for:
                   </label>
                   <select name="dept_faculty_{{d.dept.dept}}">
                     <option value="">(Select One)</option>
