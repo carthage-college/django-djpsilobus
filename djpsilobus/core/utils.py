@@ -1,18 +1,10 @@
 from django.conf import settings
 
+from djpsilobus.core.dspace import Manager
+
 import json
 import requests
 
-TOKEN = settings.DSPACE_TOKEN
-ACTION = "items/find-by-metadata-field"
-EARL = "{}/{}".format(settings.DSPACE_REST_URL, ACTION)
-VERB = "POST"
-REQUEST_TYPE="json"
-HEADERS = {
-    "Content-Type": "application/{}".format(REQUEST_TYPE),
-    "rest-dspace-token": "{}".format(TOKEN),
-    "accept": "application/{}".format(REQUEST_TYPE)
-}
 
 def find_file(phile):
     """
@@ -29,8 +21,10 @@ def find_file(phile):
         "language": "en"
     }
 
-    response = requests.post(EARL, data=json.dumps(req_dict), headers=HEADERS)
-    jason = json.loads(response._content)
+    manager = Manager()
+
+    jason = manager.request(
+        req_dict, "items/find-by-metadata-field", "post"
+    )
 
     return jason
-
