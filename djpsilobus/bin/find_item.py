@@ -40,7 +40,7 @@ def main():
 
     jason = find_file(phile)
 
-    if len(jason) > 0 and jason[0].get("name"):
+    if jason and jason[0].get("name"):
         print "title = {}".format(jason[0]["name"])
     else:
         print jason
