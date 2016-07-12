@@ -5,9 +5,6 @@ import json
 import requests
 
 
-import logging
-logger = logging.getLogger(__name__)
-
 class Manager(object):
 
     def __init__(self,
@@ -33,7 +30,6 @@ class Manager(object):
     def request(self, req_dict, uri, action, headers=None):
 
         earl = "{}/{}".format(self.rest_url, uri)
-
         if action == "post":
             action = requests.post
         elif action == "get":
@@ -41,33 +37,71 @@ class Manager(object):
         else:
             return None
 
+        # dictionary or string?
+        if type(req_dict) is dict:
+            data = json.dumps(req_dict)
+        else:
+            # used only for collection search by name
+            data = req_dict
         response = action(
-            earl, data=json.dumps(req_dict), headers=self.headers
+            earl, data=data, headers=self.headers
         )
-
         if uri == "login":
             return response._content
         else:
             return json.loads(response._content)
 
+
+class Auth(Manager):
+
     def login(self):
+        """
+        Sign in to the DSPace REST API.
+        Returns authentication token which never expires
+        until logout request is sent.
+        """
 
         headers = {
             "Content-Type": "application/{}".format(self.request_type),
         }
-        response = self.request(
+
+        return self.request(
             self.auth_dict, "login", "post", headers
         )
 
-        return response
-
     def logout(self):
         """
-        No output means success, error output means error"
+        No output means success, error output means error
         """
 
-        response = self.request(
+        return self.request(
             self.auth_dict, "logout", "post"
         )
 
-        return response
+
+class Search(Manager):
+
+    def file(self, phile, metatag):
+        """
+        Search for a file by metatag
+        """
+
+        req_dict = {
+            "key": "{}".format(metatag),
+            "value": "{}".format(phile),
+            "language": "en"
+        }
+        print req_dict
+
+        return self.request(
+            req_dict, "items/find-by-metadata-field", "post"
+        )
+
+    def collection(self, name=None):
+        """
+        Search for a collection
+        """
+
+        return self.request(
+            name, "collections/find-collection", "post"
+        )
