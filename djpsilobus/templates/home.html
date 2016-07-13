@@ -80,7 +80,7 @@ $(function(){
             background-color: #003c4b;
             padding: 0;
             margin-bottom: 0;
-            width:initial;
+            width:200px;
             color: #fff;
             font-size:.9em;
         }
@@ -97,7 +97,7 @@ $(function(){
 {% block content %}
 <div class="row">
     <div class="col-lg-12">
-      <h2>
+      <h2 title="{{user.id}}">
         {% if depts %}
           You may view the following departments
           <button id="toggle-departments" aria-expanded="true" type="button"
@@ -131,7 +131,7 @@ $(function(){
                     View all courses for:
                   </label>
                   <select name="dept_faculty_{{d.dept.dept}}">
-                    <option value="">(Select One)</option>
+                    <option value="">(Select Faculty)</option>
                     {% for f in d.faculty %}
                       <option value="{{f.id}}">
                         {{f.lastname}}, {{f.firstname}}
@@ -141,7 +141,7 @@ $(function(){
                 </div>
                 <div class="form-row">
                   <a href="{% url 'home_dept' d.dept.dept %}">
-                    View all courses for {{d.txt}}
+                    View all courses {{d.dept.txt}}
                   </a>
                 </div>
               </fieldset>

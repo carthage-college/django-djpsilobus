@@ -12,18 +12,10 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djpsilobus.settings")
 
 from django.conf import settings
 
+from djpsilobus.core.dspace import Search
+
 import argparse
-import json
 import requests
-
-REQUEST_TYPE = "json"
-TOKEN = settings.DSPACE_TOKEN
-HEADERS = {
-    "Content-Type": "application/{}".format(REQUEST_TYPE),
-    "rest-dspace-token": "{}".format(TOKEN),
-    "accept": "application/{}".format(REQUEST_TYPE)
-}
-
 
 # set up command-line options
 desc = """
@@ -35,34 +27,21 @@ parser = argparse.ArgumentParser(description=desc)
 
 parser.add_argument(
     "-n", "--name",
-    required=False,
+    required=True,
     help="The name of the collection",
     dest="name"
 )
 
 def main():
     """
-    Using the DSpace REST API, list all collections or retrieve a
-    collection if a name or an ID is provided.
+    Using the DSpace REST API, retrieve a collection by name
     """
 
-    action = "collections"
-    if name:
-        action = "collections/find-collection"
-    earl = "{}/{}".format(settings.DSPACE_REST_URL, action)
+    s = Search()
 
-    if name:
-        response = requests.post(earl, data=name, headers=HEADERS)
-    else:
-        # API always times out for this one, for some reason
-        response = requests.get(earl, headers=HEADERS)
-    #print response.__dict__
-    #print response._content
-    #print response._content[0]["name"]
-    print response.__dict__
-    jason = json.loads(response._content)
+    jason = s.collection(name)
 
-    return jason
+    print jason
 
 ######################
 # shell command line
