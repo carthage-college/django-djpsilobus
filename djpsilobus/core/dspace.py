@@ -27,7 +27,10 @@ class Manager(object):
             "accept": "application/{}".format(request_type)
         }
 
-    def request(self, req_dict, uri, action, headers=None):
+    def request(self, req_dict, uri, action, phile=None, headers=None):
+
+        if not headers:
+            headers = self.headers
 
         earl = "{}/{}".format(self.rest_url, uri)
         if action == "post":
@@ -43,9 +46,18 @@ class Manager(object):
         else:
             # used only for collection search by name
             data = req_dict
-        response = action(
-            earl, data=data, headers=self.headers
-        )
+
+        if phile:
+            response = action(
+                earl,
+                files={'file': open(phile, 'rb')},
+                headers=headers
+            )
+        else:
+            response = action(
+                earl, data=data, headers=headers
+            )
+
         if uri == "login":
             return response._content
         else:
@@ -66,7 +78,7 @@ class Auth(Manager):
         }
 
         return self.request(
-            self.auth_dict, "login", "post", headers
+            self.auth_dict, "login", "post", headers=headers
         )
 
     def logout(self):
