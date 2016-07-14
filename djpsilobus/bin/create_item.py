@@ -19,6 +19,7 @@ from django.contrib.auth.models import User
 
 from djpsilobus.core.dspace import Manager
 from djpsilobus.core.data import DEPARTMENTS, ITEM_METADATA
+from djpsilobus.core.utils import create_item
 
 from djzbar.utils.informix import get_session
 from djzbar.core.models.courses import AbstractRecord
@@ -26,6 +27,8 @@ from djzbar.core.models.courses import AbstractRecord
 import argparse
 
 EARL = settings.INFORMIX_EARL
+YEAR = "2016"
+SESS = "RA"
 
 # set up command-line options
 desc = """
@@ -35,12 +38,6 @@ desc = """
 
 parser = argparse.ArgumentParser(description=desc)
 
-parser.add_argument(
-    "-c", "--cid",
-    required=True,
-    help="Collection ID",
-    dest="cid"
-)
 parser.add_argument(
     "-u", "--uid",
     required=True,
@@ -62,47 +59,17 @@ parser.add_argument(
 
 def main():
 
-    data = ITEM_METADATA
-
-    # create database session
-    session = get_session(EARL)
-
-    c = session.query(AbstractRecord).\
-        filter_by(crs_no=course).\
-        filter_by(cat="UG16").one()
-
-    abstr = c.abstr.split('\n')
-    if len(abstr) > 1 and abstr[2] != "":
-        abstr = abstr[2]
-    else:
-        abstr = c.abstr
-
     user = User.objects.get(pk=uid)
 
-    dept = course.split(" ")[0]
-    collection_id = DEPARTMENTS[dept]
-    # author
-    data['metadata'][0]['value'] = "{}, {}".format(
-        user.last_name, user.first_name
-    )
-    # description
-    data['metadata'][1]['value'] = c.abstr.split('\n')[2]
-    # title
-    data['metadata'][2]['value'] = "Operating Systems"
-    # year
-    data['metadata'][3]['value'] = "2016"
-    # term
-    data['metadata'][4]['value'] = "Fall"
-    uri = "collections/{}/items".format(collection_id)
-    if not test:
-        manager = Manager()
-        new_item = manager.request(data, uri, "post")
-        print new_item
-    else:
-        print dept
-        print uri
-        print data
-
+    item = {
+        "course_number": course,
+        "title": "Operating Systems",
+        "year": YEAR,
+        "term": SESS,
+        "user":user
+    }
+    new_item = create_item(item)
+    print new_item
 
 ######################
 # shell command line
@@ -110,7 +77,6 @@ def main():
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    cid = args.cid
     uid = args.uid
     course = args.course
     test = args.test
