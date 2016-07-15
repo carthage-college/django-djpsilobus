@@ -47,23 +47,16 @@ def main():
 
     uri="items/{}/bitstreams/".format(iid)
 
-    req_dict = {}
-
     manager = Manager()
-    headers = {
-        "Content-Type": "multipart/form-data",
-        "rest-dspace-token": "{}".format(settings.DSPACE_TOKEN),
-        "accept": "application/pdf"
-    }
     if not test:
         jason = manager.request(
-            req_dict, uri, "post", phile=phile, headers=headers
+            uri, "post",
+            "Rosa_Luxemburg_Huelga_masas_23.pdf",
+            phile=phile
         )
-
         print jason
     else:
         print phile
-        print headers
 
 
 ######################

@@ -95,6 +95,11 @@ ITEM_METADATA = {
             "value": ""
         },
         {
+            "key": "dc.title.alternative",
+            "language": "en_US",
+            "value": ""
+        },
+        {
             "key": "dc.subject",
             "language": "en_US",
             "value": ""

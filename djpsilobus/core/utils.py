@@ -25,13 +25,13 @@ def find_file(phile):
     req_dict = {
         "key": "dc.title.alternative",
         "value": "{}".format(phile),
-        "language": "en"
+        "language": "en_US"
     }
 
     manager = Manager()
 
     jason = manager.request(
-        req_dict, "items/find-by-metadata-field", "post"
+        "items/find-by-metadata-field", "post", req_dict
     )
 
     return jason
@@ -68,17 +68,19 @@ def create_item(item):
     data['metadata'][1]['value'] = c.abstr.split('\n')[2]
     # title
     data['metadata'][2]['value'] = item["title"]
+    # title alternative
+    data['metadata'][3]['value'] = item["title_alt"]
     # subject: year
-    data['metadata'][3]['value'] = item["year"]
+    data['metadata'][4]['value'] = item["year"]
     # subject: term
-    data['metadata'][4]['value'] = TERM_LIST[item["term"]]
+    data['metadata'][5]['value'] = TERM_LIST[item["term"]]
     uri = "collections/{}/items".format(collection_id)
 
-    print data
-    print uri
+    print "data = {}".format(data)
+    print "uri = {}".format(uri)
 
     manager = Manager()
-    new_item = manager.request(data, uri, "post")
-
+    new_item = manager.request(uri, "post", data)
+    #print "new_item={}".format(new_item)
+    #print "id={}".format(new_item['id'])
     return new_item
-

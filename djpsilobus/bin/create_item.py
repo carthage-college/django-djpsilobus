@@ -17,16 +17,10 @@ django.setup()
 from django.conf import settings
 from django.contrib.auth.models import User
 
-from djpsilobus.core.dspace import Manager
-from djpsilobus.core.data import DEPARTMENTS, ITEM_METADATA
 from djpsilobus.core.utils import create_item
-
-from djzbar.utils.informix import get_session
-from djzbar.core.models.courses import AbstractRecord
 
 import argparse
 
-EARL = settings.INFORMIX_EARL
 YEAR = "2016"
 SESS = "RA"
 
@@ -69,7 +63,7 @@ def main():
         "user":user
     }
     new_item = create_item(item)
-    print new_item
+    print "new_item = {}".format(new_item)
 
 ######################
 # shell command line

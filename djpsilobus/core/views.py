@@ -5,7 +5,8 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 
-from djpsilobus.core.dspace import Search
+from djpsilobus.core.dspace import Manager, Search
+from djpsilobus.core.utils import create_item
 
 from djzbar.decorators.auth import portal_auth_required
 from djzbar.utils.informix import do_sql as do_esql
@@ -21,7 +22,7 @@ from os.path import join
 import re
 import os
 import csv
-
+import json
 import logging
 logger = logging.getLogger(__name__)
 
@@ -84,7 +85,7 @@ def home(request, dept=None):
         for c in courses:
             lastname = re.sub('[^0-9a-zA-Z]+', '_', c.lastname)
             firstname = re.sub('[^0-9a-zA-Z]+', '_', c.firstname)
-            phile = "{}_{}_{}_{}_{}_{}".format(
+            phile = "{}_{}_{}_{}_{}_{}_syllabus".format(
                 YEAR, SESS, c.crs_no.replace(" ","_"), c.sec_no,
                 lastname, firstname
             )
@@ -116,7 +117,24 @@ def home(request, dept=None):
                 phile = handle_uploaded_file(
                     syllabus, sendero, filename
                 )
-                # send to dSpace
+                # create a new parent item that will contain the uploaded file
+                item = {
+                    "course_number": crs_no,
+                    "title": crs_title,
+                    "title_alt": phile,
+                    "year": YEAR,
+                    "term": SESS,
+                    "user": request.user
+                }
+                new_item = create_item(item)
+                # send file to DSpace
+                upload = "{}/{}".format(sendero, phile)
+                #new_file = send_file(new_item, upload)
+                uri="items/{}/bitstreams/".format(new_item["id"])
+                manager = Manager()
+                response = manager.request(
+                    uri, "post", phile, phile=upload
+                )
 
     return render_to_response(
         "home.html", {
