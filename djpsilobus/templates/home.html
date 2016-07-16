@@ -110,7 +110,19 @@ $(function(){
           Greetings, {{user.first_name}} {{user.last_name}}
         {% endif %}
       </h2>
-        {% if phile %}<p>{{phile}}</p>{% endif %}
+      {% if phile %}
+        {% if phile == "error" %}
+        <div class="alert alert-danger col-lg-6">
+          <strong>Error</strong>:
+          There was a problem uploading the file. Please try again.
+        </div>
+        {% else %}
+        <div class="alert alert-success col-lg-6">
+          <strong>Success</strong>:
+          The file was uploaded successfully.
+        </div>
+        {% endif %}
+      {% endif %}
     </div>
     <!-- /.col-lg-12 -->
 </div>
