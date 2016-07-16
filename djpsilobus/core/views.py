@@ -160,7 +160,7 @@ def dspace_file_search(request):
         name = request.POST.get("name")
 
         jason = []
-        response = ""
+        content = ""
         if name.strip() != "Staff":
             s =  Search()
             jason = s.file(phile, TITLE_ALT)
@@ -169,10 +169,16 @@ def dspace_file_search(request):
             earl = "{}/bitstream/handle/{}/{}?sequence=1&isAllowed=y".format(
                 settings.DSPACE_URL, jason[0].get("handle"), phile
             )
-            response = '<a href="{}">View File</a>'.format(earl)
-        return HttpResponse(
-            response, content_type="text/plain; charset=utf-8"
-        )
+            response = render_to_response(
+                "view_file.ajax.html", {"earl":earl},
+                context_instance=RequestContext(request)
+            )
+        else:
+            response = HttpResponse(
+                "", content_type="text/plain; charset=utf-8"
+            )
     else:
-        return HttpResponseRedirect(reverse_lazy("access_denied"))
+        response = HttpResponseRedirect(reverse_lazy("access_denied"))
+
+    return response
 

@@ -4,7 +4,9 @@
     <td>{{c.obj.crs_title}}</td>
     <td align="center">{{c.obj.sec_no}}</td>
     <td>{{c.obj.fullname}}</td>
-    <td class="section" data-phile="{{c.phile}}" data-fullname="{{c.obj.fullname}}">
+    <td class="section" data-phile="{{c.phile}}"
+      {% if c.obj.fac_id == user.id %}data-faculty="true"{% endif %}
+      data-fullname="{{c.obj.fullname}}">
       {% if c.obj.needsyllabi != 'Y' %}
         Not required
       {% else %}
@@ -25,6 +27,7 @@
             <input type="submit" name="submit_{{forloop.counter0}}"
               value="Submit" id="id_submit_{{forloop.counter0}}">
           </label>
+          <i class="fa fa-fw" aria-hidden="true"></i>
         {% else %}
           No Syllabus
         {% endif %}
