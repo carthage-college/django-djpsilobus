@@ -1,6 +1,8 @@
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseRedirect
+from django.contrib import messages
+from django.http import HttpResponse
 from django.template import RequestContext
+from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
@@ -145,10 +147,30 @@ def home(request, dept=None):
                         response = manager.request(
                             uri, "post", phile, phile=upload
                         )
+                        messages.add_message(
+                            request, messages.SUCCESS,
+                            'The file was uploaded successfully.',
+                            extra_tags='success'
+                        )
                     else:
-                        phile = "error"
+                        messages.add_message(
+                            request, messages.ERROR,
+                            '''
+                                Files must be in PDF format. Please convert
+                                your file to PDF and try again.
+                            ''',
+                            extra_tags='danger'
+                        )
                 else:
-                    phile = "error"
+                    messages.add_message(
+                        request, messages.ERROR,
+                        '''
+                            Something has gone awry with the upload.
+                            Please try again.
+                        ''',
+                        extra_tags='danger'
+                    )
+
     return render_to_response(
         "home.html", {
             "depts":dept_list,"courses":secciones,"department":dept,

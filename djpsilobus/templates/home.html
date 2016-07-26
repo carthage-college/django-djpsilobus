@@ -133,6 +133,7 @@ $(function(){
         div.growlUI h1, div.growlUI h2 {
         color: white; padding: 5px 5px 5px 75px; text-align: left;font-size:2em;}
         div.growlUI h2 { font-size:1.4em;}
+        .alert h3 {margin-top:0px;}
     </style>
 {% endblock extra_style %}
 {% block content %}
@@ -150,18 +151,15 @@ $(function(){
           Greetings, {{user.first_name}} {{user.last_name}}
         {% endif %}
       </h2>
-      {% if phile %}
-        {% if phile == "error" %}
-        <div class="alert alert-danger col-lg-6">
-          <strong>Error</strong>:
-          There was a problem uploading the file. Please try again.
-        </div>
-        {% else %}
-        <div class="alert alert-success col-lg-6">
-          <strong>Success</strong>:
-          The file was uploaded successfully.
-        </div>
-        {% endif %}
+      {% if messages %}
+        {% for message in messages %}
+          <div{% if message.extra_tags %} class="alert alert-{{ message.extra_tags }}{% endif %} col-lg-6">
+            <h3>
+              {% if message.level == 40 %}Error{% else %}Success {% endif %}
+            </h3>
+            {{ message }}
+          </div>
+        {% endfor %}
       {% endif %}
     </div>
     <!-- /.col-lg-12 -->
