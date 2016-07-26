@@ -36,6 +36,8 @@ class Manager(object):
             action = requests.post
         elif action == "get":
             action = requests.get
+        elif action == "delete":
+            action = requests.delete
         else:
             return None
 
@@ -63,15 +65,21 @@ class Manager(object):
                     files=files,
                     headers=headers
                 )
+        elif action == "delete":
+            response = action(
+                earl, headers=headers
+            )
         else:
             response = action(
                 earl, data=data, headers=headers
             )
 
-        if uri == "login" or phile:
-            return response._content
-        else:
-            return json.loads(response._content)
+        try:
+            response = json.loads(response._content)
+        except:
+            response = response._content
+
+        return response
 
 
 class Auth(Manager):

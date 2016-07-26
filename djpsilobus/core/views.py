@@ -23,6 +23,7 @@ import re
 import os
 import csv
 import json
+import magic
 import logging
 logger = logging.getLogger(__name__)
 
@@ -106,40 +107,48 @@ def home(request, dept=None):
             if syllabih[i] == "True":
                 syllabus = syllabi[len(syllabi)-h]
                 h -= 1
-                crs_no = request.POST.getlist('crs_no[]')[i]
-                crs_no_slug = crs_no.replace(" ", "_")
-                sec_no = request.POST.getlist('sec_no[]')[i]
                 crs_title = request.POST.getlist('crs_title[]')[i]
-                filename = "{}_{}_{}_{}_{}_{}_syllabus".format(
-                    YEAR, SESS, crs_no_slug, sec_no,
-                    user.last_name, user.first_name
-                )
+                crs_no = request.POST.getlist('crs_no[]')[i]
+                filename = request.POST.getlist('phile[]')[i]
+                # create our DSpace manager
+                manager = Manager()
+                # remove existing file if it exists so we can replace it
+                # with the current upload
+                s =  Search()
+                jason = s.file("{}.pdf".format(filename), TITLE_ALT)
+                if jason and jason[0].get("id"):
+                    uri="items/{}/".format(jason[0].get("id"))
+                    response = manager.request(
+                        uri, "delete"
+                    )
                 phile = handle_uploaded_file(
                     syllabus, sendero, filename
                 )
                 if phile:
-                    # create a new parent item that will contain
-                    # the uploaded file
-                    item = {
-                        "course_number": crs_no,
-                        "title": crs_title,
-                        "title_alt": phile,
-                        "year": YEAR,
-                        "term": SESS,
-                        "user": request.user
-                    }
-                    new_item = create_item(item)
-                    # send file to DSpace
                     upload = "{}/{}".format(sendero, phile)
-                    #new_file = send_file(new_item, upload)
-                    uri="items/{}/bitstreams/".format(new_item["id"])
-                    manager = Manager()
-                    response = manager.request(
-                        uri, "post", phile, phile=upload
-                    )
+                    # verify file type is PDF
+                    if magic.from_file(upload, mime=True) == "application/pdf":
+                        # create a new parent item that will contain
+                        # the uploaded file
+                        item = {
+                            "course_number": crs_no,
+                            "title": crs_title,
+                            "title_alt": phile,
+                            "year": YEAR,
+                            "term": SESS,
+                            "user": request.user
+                        }
+                        new_item = create_item(item)
+                        # send file to DSpace
+                        #new_file = send_file(new_item, upload)
+                        uri="items/{}/bitstreams/".format(new_item["id"])
+                        response = manager.request(
+                            uri, "post", phile, phile=upload
+                        )
+                    else:
+                        phile = "error"
                 else:
                     phile = "error"
-
     return render_to_response(
         "home.html", {
             "depts":dept_list,"courses":secciones,"department":dept,
@@ -164,7 +173,6 @@ def dspace_file_search(request):
         if name.strip() != "Staff":
             s =  Search()
             jason = s.file(phile, TITLE_ALT)
-
         if jason and jason[0].get("name"):
             earl = "{}/bitstream/handle/{}/{}?sequence=1&isAllowed=y".format(
                 settings.DSPACE_URL, jason[0].get("handle"), phile

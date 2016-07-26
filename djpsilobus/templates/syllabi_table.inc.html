@@ -11,12 +11,12 @@
         Not required
       {% else %}
         {% if c.obj.fac_id == user.id %}
+          <input type="hidden" name="phile[]"
+            value="{{c.phile}}">
           <input type="hidden" name="crs_no[]"
             value="{{c.obj.crs_no}}">
           <input type="hidden" name="crs_title[]"
             value="{{c.obj.crs_title}}">
-          <input type="hidden" name="sec_no[]"
-            value="{{c.obj.sec_no}}">
           <label for="id_syllabi_{{forloop.counter0}}">
             <input type="file" value="add syllabus"
               name="syllabi[]" class="syllabi"

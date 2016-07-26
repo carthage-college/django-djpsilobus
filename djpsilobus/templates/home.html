@@ -72,19 +72,16 @@ $(function(){
     var $status = true;
     $('input[type="file"]').each(function() {
       var $ext = $(this).val().split('.').pop().toLowerCase();
-      console.log('ext = ' + $ext);
       if($ext && $ext != "pdf") {
         $status = false;
-      }
-      if($ext == "") {
-        $status = false;
+        return;
       }
     });
     if ($status) {
       $("#syllabus-upload").children('input[type=submit]').attr('disabled', 'disabled');
-      alert('ftw!');
-      //return true;
-      return false;
+      //alert('ftw!');
+      return true;
+      //return false;
     } else {
       $.growlUI('Error', "Files must be in PDF format");
       return false;
