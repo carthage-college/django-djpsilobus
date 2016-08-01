@@ -20,6 +20,7 @@ from djzbar.constants import TERM_LIST
 from djtools.fields.helpers import handle_uploaded_file
 
 from os.path import join
+from collections import OrderedDict
 
 import re
 import os
@@ -27,13 +28,14 @@ import csv
 import json
 import magic
 import logging
+import tarfile
+
 logger = logging.getLogger(__name__)
-
-
 # constants for now
 YEAR = "2016"
 SESS = "RA"
-TITLE_ALT = "dc.title.alternative"
+# alternative title meta tag for searching for files
+TITLE_ALT = settings.DSPACE_TITLE_ALT
 
 @portal_auth_required(
     session_var="DSPILOBUS_AUTH", redirect_url=reverse_lazy("access_denied")
@@ -44,6 +46,8 @@ def home(request, dept=None):
     uid = user.id
     # administrative users
     admin = False
+    # dean or department chair
+    dean_chair = None
     # faculty ID, name, courses
     fid = None
     pfid = None # post faculty ID
@@ -52,17 +56,26 @@ def home(request, dept=None):
     # fetch our departments
     if uid in settings.ADMINISTRATORS:
         admin = True
-        depts = do_esql(ACADEMIC_DEPARTMENTS)
+        objs = do_esql(ACADEMIC_DEPARTMENTS)
+        depts = OrderedDict()
+        for o in objs:
+            depts[(o.dept_code)] = {
+                "dept_name":o.dept_name, "dept_code":o.dept_code
+            }
+        depts = {"depts":depts}
     else:
-        depts = chair_departments(uid)
+        depts, dean_chair, division_name, division_code = chair_departments(uid)
+
     dept_list = []
     if admin or depts.get("depts"):
-        for d in depts:
-            faculty = department_faculty(d.dept)
-            dept_list.append({"dept":d,"faculty":faculty})
+        for c,v in depts["depts"].iteritems():
+            faculty = department_faculty(c,YEAR)
+            dept_list.append({"dept_name":v,"dept_code":c,"faculty":faculty})
     else:
         # we have a faculty
         fid =  uid
+
+
     # obtain the courses for department or faculty
     if dept:
         # all faculty courses for department
@@ -99,7 +112,7 @@ def home(request, dept=None):
     phile = None
     if request.method=='POST' and request.FILES:
         # complete path to directory in which we will store the file
-        sendero = join(settings.UPLOADS_DIR, request.user.username)
+
         syllabi = request.FILES.getlist('syllabi[]')
         # POST does not include empty file fields in [] so we use this
         # hidden field and javascript event to track
@@ -107,10 +120,17 @@ def home(request, dept=None):
         h = len(syllabi)
         for i in range (0,len(syllabih)):
             if syllabih[i] == "True":
+                crs_no = request.POST.getlist('crs_no[]')[i]
+                dept = department(crs_no.split(" ")[0])
+                sendero = join(
+                    settings.UPLOADS_DIR, YEAR, SESS, dept.hrdiv, dept.hrdept
+                )
+                # for display at UI level
+                dept = None
                 syllabus = syllabi[len(syllabi)-h]
+                # must be after the above
                 h -= 1
                 crs_title = request.POST.getlist('crs_title[]')[i]
-                crs_no = request.POST.getlist('crs_no[]')[i]
                 filename = request.POST.getlist('phile[]')[i]
                 # create our DSpace manager
                 manager = Manager()
@@ -175,7 +195,9 @@ def home(request, dept=None):
         "home.html", {
             "depts":dept_list,"courses":secciones,"department":dept,
             "faculty_name":faculty_name,"fid":fid,"year":YEAR,
-            "sess":TERM_LIST[SESS],"phile":phile
+            "sess":TERM_LIST[SESS],"phile":phile,"dean_chair":dean_chair,
+            "division":{"name":division_name,"code":division_code},
+            "admin":admin
         },
         context_instance=RequestContext(request)
     )
@@ -212,3 +234,31 @@ def dspace_file_search(request):
 
     return response
 
+
+@portal_auth_required(
+    session_var="DSPILOBUS_AUTH", redirect_url=reverse_lazy("access_denied")
+)
+def download(request, division, department=""):
+    response = HttpResponse(content_type='application/x-gzip')
+    name = "{}_{}_syllabi".format(division, department)
+    response['Content-Disposition'] = 'attachment; filename={}.tar.gz'.format(
+        name
+    )
+    tar_ball = tarfile.open(fileobj=response, mode='w:gz')
+    directory = "{}{}/{}/{}/{}".format(
+        settings.UPLOADS_DIR,YEAR,SESS,division,department
+    )
+    if os.path.isdir(directory):
+        tar_ball.add(directory, arcname=name)
+        tar_ball.close()
+        return response
+    else:
+        messages.add_message(
+            request, messages.ERROR,
+            '''
+                Currently, there are no course syllabi for
+                that department
+            ''',
+            extra_tags='danger'
+        )
+        return HttpResponseRedirect(reverse_lazy("home"))

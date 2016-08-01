@@ -164,6 +164,8 @@ DSPACE_PASSWORD = ""
 DSPACE_TOKEN = ""
 DSPACE_URL = "https://dspace.example.com"
 DSPACE_REST_URL = "{}/rest".format(DSPACE_URL)
+# alternative title meta tag for searching for files
+DSPACE_TITLE_ALT = "dc.title.alternative"
 # Registrar Administrators
 REGISTRAR_ADMIN = []
 # Administrative Assistants

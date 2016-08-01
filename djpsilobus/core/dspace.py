@@ -12,6 +12,7 @@ class Manager(object):
         password = settings.DSPACE_PASSWORD,
         rest_url=settings.DSPACE_REST_URL, request_type="json"):
 
+        self.token = token
         self.email = email
         self.password = password
         self.rest_url = rest_url
@@ -96,7 +97,7 @@ class Auth(Manager):
         }
 
         return self.request(
-            self.auth_dict, "login", "post", headers=headers
+            "login", "post", self.auth_dict, headers=headers
         )
 
     def logout(self):
@@ -105,7 +106,7 @@ class Auth(Manager):
         """
 
         return self.request(
-            self.auth_dict, "logout", "post"
+            "logout", "post", self.auth_dict
         )
 
 

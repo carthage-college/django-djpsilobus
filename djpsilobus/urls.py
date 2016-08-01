@@ -41,6 +41,15 @@ urlpatterns = patterns('djpsilobus.core.views',
             template_name="denied.html"
         ), name="access_denied"
     ),
+    # downloads
+    url(
+        r'^download/(?P<division>[A-Z_]+)/(?P<department>[A-Z_]+)/$',
+        'download', name="download_department"
+    ),
+    url(
+        r'^download/(?P<division>[A-Z_]+)/$',
+        'download', name="download_division"
+    ),
     # dspace API
     url(
         r'^dspace/file/search/$',

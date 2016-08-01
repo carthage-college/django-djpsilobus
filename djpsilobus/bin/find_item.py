@@ -40,10 +40,13 @@ def main():
 
     jason = find_file(phile)
 
+    '''
     if jason and jason[0].get("name"):
         print "title = {}".format(jason[0]["name"])
     else:
         print jason
+    '''
+    print jason
 
 ######################
 # shell command line

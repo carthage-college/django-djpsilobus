@@ -16,14 +16,6 @@ $(function(){
   $(".warning > select").addClass("error");
   $(".warning > textarea").addClass("error");
   $(".required > ul").parent().parent().find('h3').addClass("required");
-  $('#olvidado').click(function(e) {
-    e.preventDefault();
-    $('div#form-olvidado').toggle('500');
-  });
-  $('#acceso').click(function(e) {
-    e.preventDefault();
-    $('div#form-olvidado').toggle('500');
-  });
   $('select[name^="dept_faculty_"]').change(function(){
     $('#faculty-courses').submit();
   });
@@ -32,6 +24,12 @@ $(function(){
       return old=='Show Departments' ? 'Hide Departments' : 'Show Departments';
     });
   });
+  $('.syllabi-download').popover({'trigger':'hover'});
+  $('.syllabi-csv').popover({'trigger':'hover'});
+  {% if courses %}
+  $('#departments').collapse('toggle');
+  $('#toggle-departments').text("Show Departments");
+  {% endif %}
   // flag syllabi for upload.
   // cgi on the backend does not include empty file fields in []
   $("#courses").on('change', ".syllabi", function() {
@@ -98,14 +96,14 @@ $(function(){
         fieldset {
             border: 1px solid silver;
             margin: 5px 2px;
-            padding: .35em .625em .75em;
+            padding: .35em .625em .15em;
         }
         legend {
             display: block;
             padding: 2px 10px !important;
             border: 1px solid #003c4b;
             border-radius: 10px;
-            background-color: #6ba2b8;
+            background-color: #333399;
             padding: 0;
             margin-bottom: 0;
             width:200px;
@@ -120,7 +118,9 @@ $(function(){
             border:3px solid white; opacity: .80; filter:Alpha(Opacity=80);
             display:none; color:white; padding:20px; width:300px; z-index:1000;
         }
-        .deptHead {width:420px;float:left;margin-right:20px;}
+        .dept-head {width:420px;float:left;margin-right:20px;}
+        .dept-head a {font-weight:bold;}
+        .dept-head select {width:150px;}
         .section {text-align:center;}
         .red {color:#800;}
         .green {color:#080;}
@@ -129,22 +129,33 @@ $(function(){
         .fa-file-pdf-o {font-weight:900; margin-left: 15px; }
         .fa-fw { width: 1em; margin-left: 15px;}
         div.growlUI { position:relative;margin-top:60px; }
-        div.growlUI:before { color:red; font-size: 4em;position: absolute; font-family: 'FontAwesome'; top: 0; left: 10px; content: "\f05e"; }
+        div.growlUI:before { color:#800; font-size: 4em;position: absolute; font-family: 'FontAwesome'; top: 0; left: 10px; content: "\f05e"; }
         div.growlUI h1, div.growlUI h2 {
         color: white; padding: 5px 5px 5px 75px; text-align: left;font-size:2em;}
         div.growlUI h2 { font-size:1.4em;}
         .alert h3 {margin-top:0px;}
+        .fa-download:hover {color:#080;}
     </style>
 {% endblock extra_style %}
 {% block content %}
 <div class="row">
     <div class="col-lg-12">
-      <h2 title="{{user.id}}">
+      <h2 id="header">
         {% if depts %}
-          You may view the following departments
+          {% if dean_chair == "dean" %}
+            <a href="{% url 'download_division' division.code %}"><i class="fa fa-download syllabi-download"
+              title="Download all {{division.name}} Syllabi as a compressed archive" aria-hidden="true"></i></a>
+            <a href="#" style="font-size:.9em;">
+              <i class="fa fa-file-excel-o syllabi-csv"
+              title="Export All {{d.dept_name}} Syllabi Data to CSV for import into a spreadsheet"
+              aria-hidden="true"></i></a>
+            {{division.name}}
+          {% else %}{% if admin %}All{% else %}Your{% endif %}
+          {% endif %}
+          Departments
           <button id="toggle-departments" aria-expanded="true" type="button"
             data-toggle="collapse" data-target="#departments"
-            class="btn btn-success collapsed">
+            class="btn btn-success collapsed" title="{{user.id}}">
             Hide Departments
           </button>
         {% else %}
@@ -175,13 +186,13 @@ $(function(){
             id="faculty-courses">
             {% csrf_token %}
             {% for d in depts %}
-              <fieldset class="deptHead">
-                <legend>{{d.dept.txt}}</legend>
+              <fieldset class="dept-head">
+                <legend>{{d.dept_name}}</legend>
                 <div class="form-row">
-                  <label for="dept_faculty_{{d.dept.dept}}">
+                  <label for="dept_faculty_{{d.dept_code}}">
                     View all courses for:
                   </label>
-                  <select name="dept_faculty_{{d.dept.dept}}">
+                  <select name="dept_faculty_{{d.dept_code}}">
                     <option value="">(Select Faculty)</option>
                     {% for f in d.faculty %}
                       <option value="{{f.id}}">
@@ -191,8 +202,18 @@ $(function(){
                   </select>
                 </div>
                 <div class="form-row">
-                  <a href="{% url 'home_dept' d.dept.dept %}">
-                    View all courses {{d.dept.txt}}
+                  <a href="{% url 'home_dept' d.dept_code %}" class="fleft">
+                    View all {{d.dept_name}} courses
+                  </a>
+                  <a href="{% url 'download_department' division.code d.dept_code %}" class="fright">
+                    <i class="fa fa-download fa-2x syllabi-download"
+                    title="Download all {{d.dept_name}} syllabi as a compressed archive"
+                    aria-hidden="true"></i>
+                  </a>
+                  <a href="#" class="fright" style="margin:-5px 5px 0 0;font-size:1.7em;">
+                    <i class="fa fa-file-excel-o syllabi-csv"
+                    title="Export all {{d.dept_name}} syllabi data to CSV for import into a spreadsheet"
+                    aria-hidden="true"></i>
                   </a>
                 </div>
               </fieldset>
