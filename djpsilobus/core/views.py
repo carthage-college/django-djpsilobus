@@ -48,6 +48,10 @@ def home(request, dept=None):
     admin = False
     # dean or department chair
     dean_chair = None
+    # UI display for division deans
+    division_name = None
+    # code for path for downloads
+    division_code = None
     # faculty ID, name, courses
     fid = None
     pfid = None # post faculty ID
@@ -60,17 +64,25 @@ def home(request, dept=None):
         depts = OrderedDict()
         for o in objs:
             depts[(o.dept_code)] = {
-                "dept_name":o.dept_name, "dept_code":o.dept_code
+                "dept_name":o.dept_name, "dept_code":o.dept_code,
+                "div_name": o.div_name, "div_code": o.div_code
             }
         depts = {"depts":depts}
     else:
         depts, dean_chair, division_name, division_code = chair_departments(uid)
-
     dept_list = []
     if admin or depts.get("depts"):
-        for c,v in depts["depts"].iteritems():
-            faculty = department_faculty(c,YEAR)
-            dept_list.append({"dept_name":v,"dept_code":c,"faculty":faculty})
+        for c,d in depts["depts"].iteritems():
+        #for c,d in depts["depts"].items():
+        #for key in depts["depts"].keys():
+            faculty = department_faculty(c, YEAR)
+            dept_list.append({
+                "dept_name":d["dept_name"],
+                "dept_code":d["dept_code"],
+                "div_name":d["div_name"],
+                "div_code":d["div_code"],
+                "faculty":faculty
+            })
     else:
         # we have a faculty
         fid =  uid

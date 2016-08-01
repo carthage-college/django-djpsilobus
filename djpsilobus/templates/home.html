@@ -207,7 +207,7 @@ $(function(){
                   <a href="{% url 'home_dept' d.dept_code %}" class="fleft">
                     View all {{d.dept_name}} courses
                   </a>
-                  <a href="{% url 'download_department' division.code d.dept_code %}" class="fright">
+                  <a href="{% url 'download_department' d.div_code d.dept_code %}" class="fright">
                     <i class="fa fa-download fa-2x syllabi-download"
                     title="Download all {{d.dept_name}} syllabi as a compressed archive"
                     aria-hidden="true"></i>
