@@ -25,7 +25,7 @@ $(function(){
     });
   });
   $('.syllabi-download').popover({'trigger':'hover'});
-  $('.syllabi-csv').popover({'trigger':'hover'});
+  $('.syllabi-openxml').popover({'trigger':'hover'});
   {% if courses %}
   $('#departments').collapse('toggle');
   $('#toggle-departments').text("Show Departments");
@@ -148,8 +148,8 @@ $(function(){
             <a href="{% url 'download_division' division.code %}"><i class="fa fa-download syllabi-download"
               title="Download all {{division.name}} Syllabi as a compressed archive" aria-hidden="true"></i></a>
             <a href="#" style="font-size:.9em;">
-              <i class="fa fa-file-excel-o syllabi-csv"
-              title="Export All {{d.dept_name}} Syllabi Data to CSV for import into a spreadsheet"
+              <i class="fa fa-file-excel-o syllabi-openxml"
+              title="Export All {{d.dept_name}} Syllabi Data in OpenXML (.xlsx) format"
               aria-hidden="true"></i></a>
             {{division.name}}
           {% else %}{% if admin %}All{% else %}Your{% endif %}
@@ -212,9 +212,10 @@ $(function(){
                     title="Download all {{d.dept_name}} syllabi as a compressed archive"
                     aria-hidden="true"></i>
                   </a>
-                  <a href="#" class="fright" style="margin:-5px 5px 0 0;font-size:1.7em;">
-                    <i class="fa fa-file-excel-o syllabi-csv"
-                    title="Export all {{d.dept_name}} syllabi data to CSV for import into a spreadsheet"
+                  <a href="{% url 'openxml_department' d.div_code d.dept_code %}"
+                    class="fright" style="margin:-5px 5px 0 0;font-size:1.7em;">
+                    <i class="fa fa-file-excel-o syllabi-openxml"
+                    title="Export all {{d.dept_name}} syllabi data in OpenXML (.xlsx) format"
                     aria-hidden="true"></i>
                   </a>
                 </div>

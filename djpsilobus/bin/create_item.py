@@ -21,8 +21,8 @@ from djpsilobus.core.utils import create_item
 
 import argparse
 
-YEAR = "2016"
-SESS = "RA"
+YEAR = settings.YEAR
+SESS = settings.SESS
 
 # set up command-line options
 desc = """

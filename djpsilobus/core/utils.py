@@ -7,6 +7,7 @@ from djzbar.utils.informix import get_session
 from djzbar.core.models.courses import AbstractRecord
 from djzbar.constants import TERM_LIST
 
+import re
 import json
 import requests
 
@@ -84,3 +85,18 @@ def create_item(item):
     #print "new_item={}".format(new_item)
     #print "id={}".format(new_item['id'])
     return new_item
+
+
+def syllabus_name(course):
+    """
+    Creates the syllabus name that DSpace expects and
+    which is 99.9% unique for search purposes.
+    """
+
+    lastname = re.sub('[^0-9a-zA-Z]+', '_', course.lastname)
+    firstname = re.sub('[^0-9a-zA-Z]+', '_', course.firstname)
+    return "{}_{}_{}_{}_{}_{}_syllabus".format(
+        settings.YEAR, settings.SESS, course.crs_no.replace(" ","_"),
+        course.sec_no, lastname, firstname
+    )
+

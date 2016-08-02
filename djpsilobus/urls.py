@@ -43,12 +43,21 @@ urlpatterns = patterns('djpsilobus.core.views',
     ),
     # downloads
     url(
-        r'^download/(?P<division>[A-Z_]+)/(?P<department>[A-Z_]+)/$',
+        r'^(?P<division>[A-Z_]+)/(?P<department>[A-Z_]+)/download/$',
         'download', name="download_department"
     ),
     url(
-        r'^download/(?P<division>[A-Z_]+)/$',
+        r'^(?P<division>[A-Z_]+)/download/$',
         'download', name="download_division"
+    ),
+    # OpenXML export
+    url(
+        r'^(?P<division>[A-Z_]+)/(?P<department>[A-Z_]+)/openxml/$',
+        'openxml', name="openxml_department"
+    ),
+    url(
+        r'^(?P<division>[A-Z_]+)/openxml/$',
+        'openxml', name="openxml_division"
     ),
     # dspace API
     url(

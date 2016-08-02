@@ -173,6 +173,9 @@ ADMIN_ASSISTANTS = []
 # developers
 DEV_ADMIN = []
 ADMINISTRATORS = REGISTRAR_ADMIN + ADMIN_ASSISTANTS + DEV_ADMIN
+# year and session for now:
+YEAR=""
+SESS=""
 # logging
 LOG_FILEPATH = os.path.join(os.path.dirname(__file__), "logs/")
 LOG_FILENAME = LOG_FILEPATH + "debug.log"

@@ -1,3 +1,10 @@
+# Divisions
+DIVISIONS = {
+    "ACPR":"All College Programs",
+    "ARHU":"Arts and Humanities",
+    "NSSS":"Natural and Social Science",
+    "PRST":"Professional Studies"
+}
 # Departments
 DEPARTMENTS = {
     "ACC":"211", #Accounting
@@ -111,3 +118,20 @@ ITEM_METADATA = {
         }
     ]
 }
+
+HEADERS = [
+    'Course Number',
+    'Catelog Year',
+    'Year',
+    'Session',
+    'Section',
+    'Sub-Session',
+    'Course Title',
+    'Section Title',
+    'Faculty ID',
+    'Faculty First name',
+    'Faculty Lastname',
+    'Faculty Full Name',
+    'Needs Syllabus',
+    'Status'
+]
