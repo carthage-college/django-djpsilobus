@@ -16,9 +16,10 @@ django.setup()
 
 from django.conf import settings
 
-from djpsilobus.core.utils import syllabus_name
+from djpsilobus.core.utils import sheet, syllabus_name
 from djpsilobus.core.data import HEADERS
 from djzbar.utils.academics import sections
+from djzbar.utils.academics import division_departments
 
 from openpyxl import Workbook
 from openpyxl import load_workbook
@@ -55,53 +56,36 @@ parser.add_argument(
     dest="debug"
 )
 
+
 def main():
 
     if debug:
         print "department code = {}".format(department)
 
-    courses = sections(code=department,year=YEAR,sess=SESS)
+    wb = load_workbook('assets/template.xlsx')
+    # obtain the active worksheet
+    template = wb.active
 
-    if courses:
-        #wb = Workbook()
-        wb = load_workbook('assets/template.xlsx')
-        # grab the active worksheet
-        ws = wb.active
-
-        #print ws['A1'].value
-        # Rename sheet
-        ws.title = department
-        # 2.4 required for this to work
-        new_sheet = wb.copy_worksheet(ws)
-        new_sheet.title = "PHY"
-        # create a new sheet
-        #ws2 = wb.create_sheet(title="PHY")
-        #ws2.append(HEADERS)
-        # create a list for each row and insert into workbook
-        for c in courses:
-            section = []
-            for course in c:
-                section.append(course)
-
-            # check for syllabus
-            phile = syllabus_name(c)
-            path = "{}{}/{}/{}/{}/{}.pdf".format(
-                settings.UPLOADS_DIR,YEAR,SESS,division,department,phile
-            )
-            if debug:
-                print path
-            if os.path.isfile(path):
-                syllabus="Yes"
-            else:
-                syllabus="No"
-
-            section.append(syllabus)
-            ws.append(section)
-
-        # Save the file
-        wb.save("{}.xlsx".format(department))
+    if department:
+        courses = sections(code=department,year=YEAR,sess=SESS)
+        if courses:
+            sheet(template, division, department, courses)
+            # Save the file
+            wb.save("{}.xlsx".format(department))
+        else:
+            print "no courses found"
     else:
-        print "no courses found"
+        depts = division_departments(division)
+        for d in depts:
+            courses = sections(code=d.dept,year=YEAR,sess=SESS)
+            if courses:
+                ws = wb.copy_worksheet(template)
+                ws.title = d.dept
+                hoja = sheet(ws, division, d.dept, courses)
+        # remove the template sheet
+        wb.remove_sheet(template)
+        # Save the file
+        wb.save("{}.xlsx".format(division))
 
 
 ######################

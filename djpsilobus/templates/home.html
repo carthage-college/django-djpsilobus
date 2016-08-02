@@ -147,7 +147,7 @@ $(function(){
           {% if dean_chair == "dean" %}
             <a href="{% url 'download_division' division.code %}"><i class="fa fa-download syllabi-download"
               title="Download all {{division.name}} Syllabi as a compressed archive" aria-hidden="true"></i></a>
-            <a href="#" style="font-size:.9em;">
+            <a href="{% url 'openxml_division' division.code %}" style="font-size:.9em;">
               <i class="fa fa-file-excel-o syllabi-openxml"
               title="Export All {{d.dept_name}} Syllabi Data in OpenXML (.xlsx) format"
               aria-hidden="true"></i></a>

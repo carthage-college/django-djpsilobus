@@ -7,6 +7,7 @@ from djzbar.utils.informix import get_session
 from djzbar.core.models.courses import AbstractRecord
 from djzbar.constants import TERM_LIST
 
+import os
 import re
 import json
 import requests
@@ -100,3 +101,28 @@ def syllabus_name(course):
         course.sec_no, lastname, firstname
     )
 
+
+def sheet(ws, division, department, courses):
+    # set sheet title
+    ws.title = department
+    # create a list for each row and insert into workbook
+    for c in courses:
+        section = []
+        for course in c:
+            section.append(course)
+
+        # check for syllabus
+        phile = syllabus_name(c)
+        path = "{}{}/{}/{}/{}/{}.pdf".format(
+            settings.UPLOADS_DIR,settings.YEAR,settings.SESS,
+            division, department,phile
+        )
+        if os.path.isfile(path):
+            syllabus="Yes"
+        else:
+            syllabus="No"
+
+        section.append(syllabus)
+        ws.append(section)
+
+    return ws

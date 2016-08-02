@@ -8,13 +8,14 @@ from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 
 from djpsilobus.core.dspace import Manager, Search
-from djpsilobus.core.utils import syllabus_name
+from djpsilobus.core.utils import sheet, syllabus_name
 from djpsilobus.core.utils import create_item
 
 from djzbar.decorators.auth import portal_auth_required
 from djzbar.utils.informix import do_sql as do_esql
 from djzbar.utils.hr import chair_departments, department, department_faculty
 from djzbar.utils.academics import sections
+from djzbar.utils.academics import division_departments
 from djzbar.core.sql import ACADEMIC_DEPARTMENTS
 from djzbar.constants import TERM_LIST
 
@@ -278,58 +279,42 @@ def download(request, division, department=""):
     session_var="DSPILOBUS_AUTH", redirect_url=reverse_lazy("access_denied")
 )
 def openxml(request, division, department=""):
-    courses = sections(code=department,year=YEAR,sess=SESS)
 
-    if courses:
-        wb = load_workbook('{}template.xlsx'.format(settings.MEDIA_ROOT))
+    wb = load_workbook('{}template.xlsx'.format(settings.MEDIA_ROOT))
 
-        # grab the active worksheet
-        ws = wb.active
+    # obtain the active worksheet
+    template = wb.active
 
-        #print ws['A1'].value
-        # Rename sheet
-        ws.title = department
-        # waiting for 2.4 for this to work
-        #new_sheet = wb.copy_worksheet(ws)
-        # create a new sheet
-        ws2 = wb.create_sheet(title="PHY")
-        ws2.append(HEADERS)
-
-        # create a list for each row and insert into workbook
-        for c in courses:
-            section = []
-            for course in c:
-                section.append(course)
-
-            # check for syllabus
-            phile = syllabus_name(c)
-            path = "{}{}/{}/{}/{}/{}.pdf".format(
-                settings.UPLOADS_DIR,YEAR,SESS,division,department,phile
+    if department:
+        courses = sections(code=department,year=YEAR,sess=SESS)
+        if courses:
+            sheet(template, division, department, courses)
+        else:
+            messages.add_message(
+                request, messages.ERROR,
+                '''
+                    No courses found for that department.
+                ''',
+                extra_tags='danger'
             )
-            if os.path.isfile(path):
-                syllabus="Yes"
-            else:
-                syllabus="No"
-
-            section.append(syllabus)
-            ws.append(section)
-
-        # in memory response instead of save to file system
-        response = HttpResponse(save_virtual_workbook(wb), content_type='application/ms-excel')
-
-        name = "{}_{}_syllabi".format(division, department)
-        response['Content-Disposition'] = 'attachment;filename={}.xlsx'.format(
-            name
-        )
-
-        return response
+            return HttpResponseRedirect(reverse_lazy("home"))
     else:
-        messages.add_message(
-            request, messages.ERROR,
-            '''
-                No courses found for that department.
-            ''',
-            extra_tags='danger'
-        )
-        return HttpResponseRedirect(reverse_lazy("home"))
+        depts = division_departments(division)
+        for d in depts:
+            courses = sections(code=d.dept,year=YEAR,sess=SESS)
+            if courses:
+                ws = wb.copy_worksheet(template)
+                ws.title = d.dept
+                hoja = sheet(ws, division, d.dept, courses)
+        # remove the template sheet
+        wb.remove_sheet(template)
 
+    # in memory response instead of save to file system
+    response = HttpResponse(save_virtual_workbook(wb), content_type='application/ms-excel')
+
+    name = "{}_{}_syllabi".format(division, department)
+    response['Content-Disposition'] = 'attachment;filename={}.xlsx'.format(
+        name
+    )
+
+    return response
