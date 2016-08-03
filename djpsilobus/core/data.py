@@ -7,82 +7,82 @@ DIVISIONS = {
 }
 # Departments
 DEPARTMENTS = {
-    "ACC":"211", #Accounting
+    "ACC":"229", #Accounting
     "ART":"209", #Art
     "ARH":"210", #Art History
     "ASN":"212", #Asian Studies Program
     "_ASN":"212", #Asian Studies Program
-    "ATH":"Athletic Training",
-    "_ATH":"Athletic Training",
-    "BIO":"Biology",
-    "BUS":"Business Administration",
-    "CHM":"Chemistry",
+    "ATH":"215", #Athletic Training
+    "_ATH":"215", #Athletic Training
+    "BIO":"214", #Biology
+    "BUS":"216", #Business Administration
+    "CHM":"217", #Chemistry
     "CHN":"208", #Chinese
-    "CLS":"Classics",
-    "CDM":"Communication Digital Media",
+    "CLS":"226", #Classics
+    "CDM":"219", #Communication Digital Media
     "CSC":"204", #Computer Science
     "CONF":"Conference",
     "ADUL":"Continuing Studies",
-    "CRJ":"Criminal Justice Program",
-    "_CRJ":"Criminal Justice Program",
+    "CRJ":"220", #Criminal Justice Program
+    "_CRJ":"220", #Criminal Justice Program
     "DIS":"Discovery Program",
     "_DIS":"Discovery Program",
-    "ECN":"Economics",
-    "EDU":"Education",
-    "ENG":"English",
+    "ECN":"221", #Economics
+    "EDU":"222", #Education
+    "ENG":"223", #English
     "ENRC":"Enrichment",
-    "ENV":"Environmental Science",
-    "_ENV":"Environmental Science",
-    "EXS":"Exercise and Sport Science",
-    "FIN":"Finance",
-    "FAC":"Finance and Accounting",
+    "ENV":"224", #Environmental Science
+    "_ENV":"224", #Environmental Science
+    "EXS":"225", #Exercise and Sport Science
+    "FIN":"230", #Finance
+    "FAC":"Finance and Accounting", # Sub-Community
     "FRN":"205", # French
     "GNR":"General",
     "_GNR":"General",
-    "GEO":"Geography and Earth Science",
-    "GRM":"German",
-    "GBL":"Global Heritage Program",
-    "_GBL":"Global Heritage Program",
-    "GRK":"Greek",
-    "GFW":"Great Ideas Program",
-    "_GFW":"Great Ideas Program",
-    "HIS":"History",
-    "HON":"Honors Program",
-    "_HON":"Honors Program",
-    "IPE":"International Political Econ",
-    "_IPE":"International Political Econ",
+    "GEO":"231", #Geography and Earth Science
+    "GRM":"232", #German
+    "GBL":"233", #Global Heritage Program
+    "_GBL":"233", #Global Heritage Program
+    "GRK":"227", #Greek
+    "GFW":"234", #Great Ideas Program
+    "_GFW":"234", #Great Ideas Program
+    "HIS":"235", #History
+    "HON":"236", #Honors Program
+    "_HON":"236", #Honors Program
+    "IPE":"237", #International Political Economy
+    "_IPE":"237", #International Political Economy
     "JPN":"206", # Japanese
-    "LTN":"Latin",
-    "MKT":"Marketing",
-    "MGT":"Management",
-    "MMK":"Management and Marketing",
+    "LTN":"228", #Latin
+    "MGT":"239", #Management
+    "MKT":"238", #Marketing
+    "MMK":"Management and Marketing", # Sub-Community
     "MTH":"202", #Mathematics
     "MLA":"207", #Modern Languages
-    "MUS":"Music",
-    "NEU":"Neuroscience Program",
-    "_NEU":"Neuroscience Program",
-    "NUR":"Nursing",
-    "PEH":"PE/Health Program",
-    "_PEH":"PE/Health Program",
+    "MUS":"240", #Music
+    "NEU":"241", #Neuroscience Program
+    "_NEU":"241", #Neuroscience Program
+    "NUR":"242", #Nursing
+    "PEH":"243", #Physical Education/Health Program
+    "_PEH":"243", #Physical Education/Health Program
     "PARA":"Paralegal Program",
-    "PHL":"Philosophy",
+    "PHL":"244", #Philosophy
     "PHY":"203", #Physics/Astronomy
-    "POL":"Political Science",
-    "PYC":"Psychological Science",
-    "REL":"Religion",
+    "POL":"245", #Political Science
+    "PYC":"246", #Psychological Science
+    "REL":"247", #Religion
     "ESN":"Science Works Program",
     "_ESN":"Science Works Program",
-    "SSC":"Social Science Program",
-    "_SSC":"Social Science Program",
-    "SWK":"Social Work",
-    "SOC":"Sociology",
+    "SSC":"248", #Social Science Program
+    "_SSC":"248", #Social Science Program
+    "SWK":"249", #Social Work
+    "SOC":"250", #Sociology
     "SPN":"201", # Spanish
-    "THR":"Theatre",
-    "COR":"Western Heritage Program",
-    "WHE":"Western Heritage Program",
-    "_WHE":"Western Heritage Program",
-    "WMG":"Women and Gender Studies",
-    "_WMG":"Women and Gender Studies"
+    "THR":"251", #Theatre
+    "COR":"252", #Western Heritage Program
+    "WHE":"252", #Western Heritage Program
+    "_WHE":"252", #Western Heritage Program
+    "WMG":"253", #Women and Gender Studies
+    "_WMG":"253" #Women and Gender Studies
 }
 # metadata for creating a new item in a collection
 ITEM_METADATA = {

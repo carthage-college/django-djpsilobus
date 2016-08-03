@@ -41,7 +41,7 @@ def find_file(phile):
 def create_item(item):
     """
     Accepts a dictionary with the following keys:
-    course_number, title, year, term, user
+    course_number, title, year, term, fullname
     """
 
     data = ITEM_METADATA
@@ -63,9 +63,7 @@ def create_item(item):
     dept = item["course_number"].split(" ")[0]
     collection_id = DEPARTMENTS[dept]
     # author
-    data['metadata'][0]['value'] = "{}, {}".format(
-        item["user"].last_name, item["user"].first_name
-    )
+    data['metadata'][0]['value'] = item["fullname"]
     # description
     data['metadata'][1]['value'] = c.abstr.split('\n')[2]
     # title

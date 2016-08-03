@@ -143,6 +143,7 @@ def home(request, dept=None):
                 h -= 1
                 crs_title = request.POST.getlist('crs_title[]')[i]
                 filename = request.POST.getlist('phile[]')[i]
+                fullname = request.POST.getlist('fullname[]')[i]
                 # create our DSpace manager
                 manager = Manager()
                 # remove existing file if it exists so we can replace it
@@ -169,7 +170,7 @@ def home(request, dept=None):
                             "title_alt": phile,
                             "year": YEAR,
                             "term": SESS,
-                            "user": request.user
+                            "fullname": fullname
                         }
                         new_item = create_item(item)
                         # send file to DSpace

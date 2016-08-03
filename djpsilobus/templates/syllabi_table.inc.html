@@ -1,3 +1,4 @@
+{% load ifusergroup %}
 {% for c in courses %}
   <tr>
     <td>{{c.obj.crs_no}}</td>
@@ -10,11 +11,13 @@
       {% if c.obj.needsyllabi != 'Y' %}
         Not required
       {% else %}
-        {% if c.obj.fac_id == user.id %}
+        {% if c.obj.fac_id == user.id or admin %}
           <input type="hidden" name="phile[]"
             value="{{c.phile}}">
           <input type="hidden" name="crs_no[]"
             value="{{c.obj.crs_no}}">
+          <input type="hidden" name="fullname[]"
+            value="{{c.obj.fullname}}">
           <input type="hidden" name="crs_title[]"
             value="{{c.obj.crs_title}}">
           <label for="id_syllabi_{{forloop.counter0}}">
