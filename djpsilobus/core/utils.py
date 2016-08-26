@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.conf import settings
 
 from djpsilobus.core.data import DEPARTMENTS, ITEM_METADATA
@@ -56,16 +57,18 @@ def create_item(item):
 
     abstr = c.abstr.split('\n')
     if len(abstr) > 1 and abstr[2] != "":
-        abstr = abstr[2]
+        #abstr = u"{}".format(abstr[2].decode('utf-8'))
+        abstr = abstr[2].decode("cp1252", "ignore")
     else:
-        abstr = c.abstr
+        #abstr = u"{}".format(c.abstr.decode('utf-8'))
+        abstr = c.abstr.decode("cp1252", "ignore")
 
     dept = item["course_number"].split(" ")[0]
     collection_id = DEPARTMENTS[dept]
     # author
     data['metadata'][0]['value'] = item["fullname"]
     # description
-    data['metadata'][1]['value'] = c.abstr.split('\n')[2]
+    data['metadata'][1]['value'] = abstr
     # title
     data['metadata'][2]['value'] = item["title"]
     # title alternative
