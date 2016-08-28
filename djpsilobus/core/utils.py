@@ -95,7 +95,7 @@ def syllabus_name(course):
     lastname = re.sub('[^0-9a-zA-Z]+', '_', course.lastname)
     firstname = re.sub('[^0-9a-zA-Z]+', '_', course.firstname)
     return "{}_{}_{}_{}_{}_{}_syllabus".format(
-        settings.YEAR, settings.SESS, course.crs_no.replace(" ","_"),
+        course.yr, course.sess, course.crs_no.replace(" ","_"),
         course.sec_no, lastname, firstname
     )
 
@@ -112,7 +112,7 @@ def sheet(ws, division, department, courses):
         # check for syllabus
         phile = syllabus_name(c)
         path = "{}{}/{}/{}/{}/{}.pdf".format(
-            settings.UPLOADS_DIR,settings.YEAR,settings.SESS,
+            settings.UPLOADS_DIR,c.yr,c.sess,
             division, department,phile
         )
         if os.path.isfile(path):

@@ -7,7 +7,18 @@
 <script type="text/javascript">
 $(function(){
   var table = $('.courses-data').dataTable({
-    "bPaginate": false
+    "bPaginate": false,
+    "bFilter": false,
+     ordering:false,
+     columnDefs: [
+       {
+        width: 90, targets: 0,
+        width: 30, targets: 2,
+        width: 150, targets: 3,
+        width: 350, targets: 4
+       }
+     ],
+     fixedColumns: true
   });
   $(".required > input").addClass("required");
   $(".required > select").addClass("required");
@@ -113,6 +124,7 @@ $(function(){
             letter-spacing: 0.02em;
         }
         label {margin-bottom:0;}
+        thead, tfoot {background-color:#3ab0c8;color:#ffffff;}
         #toggle-departments {width:150px;}
         #notice {
             position:absolute; top:175px; left:300px; background-color:#880000;
@@ -256,9 +268,9 @@ $(function(){
               dataTable display courses-data" id="courses">
               <thead>
                 <tr>
-                  <th style="text-align:center;">Course #</th>
-                  <th style="text-align:center;">Course Title</th>
-                  <th style="text-align:center;">Secion Number</th>
+                  <th style="text-align:center;">Number</th>
+                  <th style="text-align:center;">Title</th>
+                  <th style="text-align:center;">Sec.</th>
                   <th style="text-align:center;">Instructor</th>
                   <th style="text-align:center;">Syllabus</th>
                 </tr>
@@ -268,9 +280,9 @@ $(function(){
               </tbody>
               <tfoot>
                 <tr>
-                  <th style="text-align:center;">Course #</th>
-                  <th style="text-align:center;">Course Title</th>
-                  <th style="text-align:center;">Secion Number</th>
+                  <th style="text-align:center;">Number</th>
+                  <th style="text-align:center;">Title</th>
+                  <th style="text-align:center;">Sec.</th>
                   <th style="text-align:center;">Instructor</th>
                   <th style="text-align:center;">Syllabus</th>
                 </tr>

@@ -30,28 +30,51 @@ from openpyxl.writer.excel import save_virtual_workbook
 import re
 import os
 import csv
+import datetime
 import json
 import magic
 import logging
 import tarfile
 
 logger = logging.getLogger(__name__)
-# constants for now
-YEAR = settings.YEAR
-SESS = settings.SESS
+YEAR = datetime.date.today().year
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
+
+def get_session():
+    """
+    AA  Fall I  UNDG
+    AB  Fall II     UNDG
+    AG  Winter  UNDG
+    AK  Spring I    UNDG
+    AM  Spring II   UNDG
+    AS  Summer I    UNDG
+    AT  Summer II   UNDG
+
+    GA  Fall Graduate   GRAD
+    GB  Winter Graduate     GRAD
+    GC  Spring Graduate     GRAD
+    GE  Summer Graduate     GRAD
+
+    RA  Fall    UNDG
+    RB  J-Term  UNDG
+    RC  Spring  UNDG
+    RE  Summer  UNDG
+    """
+    # constant for now
+    return settings.SESS
 
 @portal_auth_required(
     session_var="DSPILOBUS_AUTH", redirect_url=reverse_lazy("access_denied")
 )
 def home(request, dept=None):
+    SESS = get_session()
     # current user
     user = request.user
     uid = user.id
     # administrative users
     admin = False
-    # dean or department chair
+    # division dean or department chair
     dean_chair = None
     # UI display for division deans
     division_name = None
@@ -131,10 +154,12 @@ def home(request, dept=None):
         h = len(syllabi)
         for i in range (0,len(syllabih)):
             if syllabih[i] == "True":
+                year = request.POST.getlist('year[]')[i]
+                sess = request.POST.getlist('sess[]')[i]
                 crs_no = request.POST.getlist('crs_no[]')[i]
                 dept = department(crs_no.split(" ")[0])
                 sendero = join(
-                    settings.UPLOADS_DIR, YEAR, SESS, dept.hrdiv, dept.hrdept
+                    settings.UPLOADS_DIR, year, sess, dept.hrdiv, dept.hrdept
                 )
                 # for display at UI level
                 dept = None
@@ -168,8 +193,8 @@ def home(request, dept=None):
                             "course_number": crs_no,
                             "title": crs_title,
                             "title_alt": phile,
-                            "year": YEAR,
-                            "term": SESS,
+                            "year": year,
+                            "term": sess,
                             "fullname": fullname
                         }
                         new_item = create_item(item)
@@ -207,7 +232,7 @@ def home(request, dept=None):
         "home.html", {
             "depts":dept_list,"courses":secciones,"department":dept,
             "faculty_name":faculty_name,"fid":fid,"year":YEAR,
-            "sess":TERM_LIST[SESS],"phile":phile,"dean_chair":dean_chair,
+            "sess":TERM_LIST[SESS[0]],"phile":phile,"dean_chair":dean_chair,
             "division":{"name":division_name,"code":division_code},
             "admin":admin
         },
@@ -257,19 +282,23 @@ def download(request, division, department=""):
         name
     )
     tar_ball = tarfile.open(fileobj=response, mode='w:gz')
-    directory = "{}{}/{}/{}/{}".format(
-        settings.UPLOADS_DIR,YEAR,SESS,division,department
-    )
-    if os.path.isdir(directory):
-        tar_ball.add(directory, arcname=name)
-        tar_ball.close()
+    directory = False
+    for sess in get_session():
+        directory = "{}{}/{}/{}/{}".format(
+            settings.UPLOADS_DIR,YEAR,sess,division,department
+        )
+        if os.path.isdir(directory):
+            tar_ball.add(directory, arcname=name)
+            directory = True
+    tar_ball.close()
+    if directory:
         return response
     else:
         messages.add_message(
             request, messages.ERROR,
             '''
                 Currently, there are no course syllabi for
-                that department
+                that division or department
             ''',
             extra_tags='danger'
         )
@@ -287,7 +316,7 @@ def openxml(request, division, department=""):
     template = wb.active
 
     if department:
-        courses = sections(code=department,year=YEAR,sess=SESS)
+        courses = sections(code=department,year=YEAR,sess=get_session())
         if courses:
             sheet(template, division, department, courses)
         else:
@@ -302,7 +331,7 @@ def openxml(request, division, department=""):
     else:
         depts = division_departments(division)
         for d in depts:
-            courses = sections(code=d.dept,year=YEAR,sess=SESS)
+            courses = sections(code=d.dept,year=YEAR,sess=get_session())
             if courses:
                 ws = wb.copy_worksheet(template)
                 ws.title = d.dept
@@ -311,7 +340,9 @@ def openxml(request, division, department=""):
         wb.remove_sheet(template)
 
     # in memory response instead of save to file system
-    response = HttpResponse(save_virtual_workbook(wb), content_type='application/ms-excel')
+    response = HttpResponse(
+        save_virtual_workbook(wb), content_type='application/ms-excel'
+    )
 
     name = "{}_{}_syllabi".format(division, department)
     response['Content-Disposition'] = 'attachment;filename={}.xlsx'.format(

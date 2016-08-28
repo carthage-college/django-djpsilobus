@@ -14,6 +14,10 @@
         {% if c.obj.fac_id == user.id or admin %}
           <input type="hidden" name="phile[]"
             value="{{c.phile}}">
+          <input type="hidden" name="year[]"
+            value="{{c.obj.yr}}">
+          <input type="hidden" name="sess[]"
+            value="{{c.obj.sess}}">
           <input type="hidden" name="crs_no[]"
             value="{{c.obj.crs_no}}">
           <input type="hidden" name="fullname[]"
