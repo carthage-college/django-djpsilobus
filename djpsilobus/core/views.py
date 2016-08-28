@@ -41,7 +41,7 @@ YEAR = datetime.date.today().year
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
 
-def get_session():
+def get_session_term():
     """
     AA  Fall I  UNDG
     AB  Fall II     UNDG
@@ -68,7 +68,7 @@ def get_session():
     session_var="DSPILOBUS_AUTH", redirect_url=reverse_lazy("access_denied")
 )
 def home(request, dept=None):
-    SESS = get_session()
+    SESS = get_session_term()
     # current user
     user = request.user
     uid = user.id
@@ -283,7 +283,7 @@ def download(request, division, department=""):
     )
     tar_ball = tarfile.open(fileobj=response, mode='w:gz')
     directory = False
-    for sess in get_session():
+    for sess in get_session_term():
         directory = "{}{}/{}/{}/{}".format(
             settings.UPLOADS_DIR,YEAR,sess,division,department
         )
@@ -316,7 +316,7 @@ def openxml(request, division, department=""):
     template = wb.active
 
     if department:
-        courses = sections(code=department,year=YEAR,sess=get_session())
+        courses = sections(code=department,year=YEAR,sess=get_session_term())
         if courses:
             sheet(template, division, department, courses)
         else:
@@ -331,7 +331,7 @@ def openxml(request, division, department=""):
     else:
         depts = division_departments(division)
         for d in depts:
-            courses = sections(code=d.dept,year=YEAR,sess=get_session())
+            courses = sections(code=d.dept,year=YEAR,sess=get_session_term())
             if courses:
                 ws = wb.copy_worksheet(template)
                 ws.title = d.dept
