@@ -7,13 +7,15 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 
+from djpsilobus.core.data import DEPARTMENT_EXCEPTIONS
 from djpsilobus.core.dspace import Manager, Search
 from djpsilobus.core.utils import sheet, syllabus_name
 from djpsilobus.core.utils import create_item
 
 from djzbar.decorators.auth import portal_auth_required
 from djzbar.utils.informix import do_sql as do_esql
-from djzbar.utils.hr import chair_departments, department, department_faculty
+from djzbar.utils.hr import chair_departments, academic_department
+from djzbar.utils.hr import department_faculty
 from djzbar.utils.academics import sections
 from djzbar.utils.academics import division_departments
 from djzbar.core.sql import ACADEMIC_DEPARTMENTS
@@ -88,7 +90,9 @@ def home(request, dept=None):
     # fetch our departments
     if uid in settings.ADMINISTRATORS:
         admin = True
-        objs = do_esql(ACADEMIC_DEPARTMENTS)
+
+        sql = "{} ORDER BY dept_table.txt".format(ACADEMIC_DEPARTMENTS)
+        objs = do_esql(sql)
         depts = OrderedDict()
         for o in objs:
             depts[(o.dept_code)] = {
@@ -120,7 +124,7 @@ def home(request, dept=None):
     if dept:
         # all faculty courses for department
         courses = sections(code=dept,year=YEAR,sess=SESS)
-        dept = department(dept)
+        dept = academic_department(dept)
         if dept:
             dept = dept[0]
     elif request.method == "POST" and not request.FILES:
@@ -157,9 +161,16 @@ def home(request, dept=None):
                 year = request.POST.getlist('year[]')[i]
                 sess = request.POST.getlist('sess[]')[i]
                 crs_no = request.POST.getlist('crs_no[]')[i]
-                dept = department(crs_no.split(" ")[0])
+                code = crs_no.split(" ")[0]
+                # chapuza for now until we can figure out what to do
+                # with department codes that do not translate to actual
+                # departments
+                if DEPARTMENT_EXCEPTIONS.get(code):
+                    code = DEPARTMENT_EXCEPTIONS.get(code)
+                dept = academic_department(code)
                 sendero = join(
-                    settings.UPLOADS_DIR, year, sess, dept.hrdiv, dept.hrdept
+                    settings.UPLOADS_DIR, year, sess, dept.div_code,
+                    dept.dept_code
                 )
                 # for display at UI level
                 dept = None
