@@ -50,7 +50,13 @@ def create_item(item):
     # create database session
     session = get_session(EARL)
 
-    cat = "UG{}".format(item["year"][-2:])
+    prefix = "UG"
+    if item["term"][0] == "G":
+        prefix = "GR"
+    cat = "{}{}".format(prefix, item["year"][-2:])
+    # we should check for a query result before fetching with one()
+    # method but this helps us track down any cases where an abstract
+    # is not found and we can then determine why. QA on the fly.
     c = session.query(AbstractRecord).\
         filter_by(crs_no = item["course_number"]).\
         filter_by(cat = cat).one()
