@@ -85,9 +85,11 @@ DEPARTMENTS = {
     "_WMG":"253" #Women and Gender Studies
 }
 DEPARTMENT_EXCEPTIONS = {
-    'MGT':'MMK','ARH':'ART','JPN':'MLA','FRN':'MLA','GRM':'MLA',
-    'SPN':'MLA','CHN':'MLA','MKT':'MLA','GRK':'CLS','LTN':'CLS',
-    'ACC':'FAC','FIN':'FAC'
+    'ESN':'_ESN','MGT':'MMK','ARH':'ART','JPN':'MLA','FRN':'MLA','GRM':'MLA',
+    'SPN':'MLA','CHN':'MLA','MKT':'MMK','GRK':'CLS','LTN':'CLS','IPE':'_IPE',
+    'ACC':'FAC','FIN':'FAC','SSC':'_SSC','ASN':'_ASN','NEU':'_NEU',
+    'DIS':'_DIS','GFW':'_GFW','WHE':'_WHE','WMG':'_WMG','PEH':'_PEH',
+    'GBL':'_GBL','CRJ':'_CRJ','ATH':'_ATH'
 }
 # metadata for creating a new item in a collection
 ITEM_METADATA = {
