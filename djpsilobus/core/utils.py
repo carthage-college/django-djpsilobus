@@ -54,20 +54,19 @@ def create_item(item):
     if item["term"][0] == "G":
         prefix = "GR"
     cat = "{}{}".format(prefix, item["year"][-2:])
-    # we should check for a query result before fetching with one()
-    # method but this helps us track down any cases where an abstract
-    # is not found and we can then determine why. QA on the fly.
     c = session.query(AbstractRecord).\
         filter_by(crs_no = item["course_number"]).\
-        filter_by(cat = cat).one()
-
-    abstr = c.abstr.split('\n')
-    if len(abstr) > 1 and abstr[2] != "":
-        #abstr = u"{}".format(abstr[2].decode('utf-8'))
-        abstr = abstr[2].decode("cp1252", "ignore")
+        filter_by(cat = cat).first()
+    if c and c.abstr:
+        abstr = c.abstr.split('\n')
+        if len(abstr) > 1 and abstr[2] != "":
+            #abstr = u"{}".format(abstr[2].decode('utf-8'))
+            abstr = abstr[2].decode("cp1252", "ignore")
+        else:
+            #abstr = u"{}".format(c.abstr.decode('utf-8'))
+            abstr = c.abstr.decode("cp1252", "ignore")
     else:
-        #abstr = u"{}".format(c.abstr.decode('utf-8'))
-        abstr = c.abstr.decode("cp1252", "ignore")
+        abstr = ""
 
     dept = item["course_number"].split(" ")[0]
     collection_id = DEPARTMENTS[dept]
