@@ -210,7 +210,6 @@ def home(request, dept=None):
                         }
                         new_item = create_item(item)
                         # send file to DSpace
-                        #new_file = send_file(new_item, upload)
                         uri="items/{}/bitstreams/".format(new_item["id"])
                         response = manager.request(
                             uri, "post", phile, phile=upload
