@@ -84,7 +84,7 @@ $(function(){
       var $ext = $(this).val().split('.').pop().toLowerCase();
       if($ext && $ext != "pdf") {
         $status = false;
-        return;
+        return false;
       }
     });
     if ($status) {
