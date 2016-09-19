@@ -1,10 +1,10 @@
 #!/bin/bash
 
 DSPACEURL="https://dspace.carthage.edu/rest"
-FILE="/data2/www/data/Resistencia_ENERO_MARZO_baja.pdf"
+FILE="/data2/www/Rosa_Luxemburg_Huelga_masas_23.pdf"
 VERB="POST"
-TOKEN=""
-ACTION="items/1049/bitstreams/?name=Resistencia_ENERO_MARZO_baja.pdf"
+TOKEN="d8f00d42-e75a-4744-b54f-b70a2922c17f"
+ACTION="items/1279/bitstreams/?name=Rosa_Luxemburg_Huelga_masas_23.pdf"
 EARL="${DSPACEURL}/${ACTION}"
 echo ${EARL}
 
