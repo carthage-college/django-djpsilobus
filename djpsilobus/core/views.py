@@ -115,10 +115,6 @@ def home(request, dept=None):
                 "div_code":d["div_code"],
                 "faculty":faculty
             })
-    else:
-        # we have a faculty
-        fid =  uid
-
 
     # obtain the courses for department or faculty
     if dept:
@@ -134,8 +130,12 @@ def home(request, dept=None):
                 pfid = int(val)
         if pfid:
             fid = pfid
-    if fid:
-        # one faculty
+
+    # this could be a faculty who is deptartment chair but has
+    # courses in other department e.g. renaud
+    if not fid and not courses:
+        fid = uid
+        # faculty courses
         courses = sections(year=YEAR,sess=SESS,fid=fid)
         if courses:
             faculty_name = courses[0][11]
