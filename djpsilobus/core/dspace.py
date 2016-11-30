@@ -6,25 +6,24 @@ import requests
 
 class Manager(object):
 
-    def __init__(self,
-        token=settings.DSPACE_TOKEN,
-        email = settings.DSPACE_EMAIL,
-        password = settings.DSPACE_PASSWORD,
-        rest_url=settings.DSPACE_REST_URL, request_type="json"):
+    def __init__(self):
 
-        self.token = token
-        self.email = email
-        self.password = password
-        self.rest_url = rest_url
-        self.request_type = request_type
-        self.auth_dict = {
-            "email":"{}".format(self.email),
-            "password":"{}".format(self.password)
+        self.rest_url = settings.DSPACE_REST_URL
+        # obtain our token from DSpace server
+        login_url = "{}/login".format(self.rest_url)
+        login_dict = {
+            "email":"{}".format(settings.DSPACE_EMAIL),
+            "password":"{}".format(settings.DSPACE_PASSWORD)
         }
+        token = requests.post(
+            login_url, data=json.dumps(login_dict),
+            headers={'content-type': 'application/json'}
+        )
+        token = token._content
         self.headers = {
-            "Content-Type": "application/{}".format(request_type),
+            "Content-Type": "application/json",
             "rest-dspace-token": "{}".format(token),
-            "accept": "application/{}".format(request_type)
+            "accept": "application/json"
         }
 
     def request(self, uri, action, req_dict=None, phile=None, headers=None):
@@ -81,33 +80,6 @@ class Manager(object):
             response = response._content
 
         return response
-
-
-class Auth(Manager):
-
-    def login(self):
-        """
-        Sign in to the DSPace REST API.
-        Returns authentication token which never expires
-        until logout request is sent.
-        """
-
-        headers = {
-            "Content-Type": "application/{}".format(self.request_type),
-        }
-
-        return self.request(
-            "login", "post", self.auth_dict, headers=headers
-        )
-
-    def logout(self):
-        """
-        No output means success, error output means error
-        """
-
-        return self.request(
-            "logout", "post", self.auth_dict
-        )
 
 
 class Search(Manager):
