@@ -15,7 +15,8 @@ def _get_token():
     }
     token = requests.post(
         login_url, data=json.dumps(login_dict),
-        headers={'content-type': 'application/json'}
+        headers={'content-type': 'application/json'},
+        verify=False
     )
     return token._content
 
@@ -33,7 +34,8 @@ class Manager(object):
             }
             token = requests.post(
                 login_url, data=json.dumps(login_dict),
-                headers={'content-type': 'application/json'}
+                headers={'content-type': 'application/json'},
+                verify=False
             )
             token = token._content
             token = _get_token()
@@ -47,7 +49,7 @@ class Manager(object):
             }
             response = requests.get(
                 '{}/status'.format(REST_URL),
-                headers=headers
+                headers=headers, verify=False
             )
             r = json.loads( response._content )
 
@@ -94,17 +96,15 @@ class Manager(object):
                 #files = {'file': (phile, payload, 'application/pdf', {'Expires': '0'})}
                 #data = {'name': phile}
                 response = action(
-                    earl,
-                    files=files,
-                    headers=headers
+                    earl, files=files, headers=headers, verify=False
                 )
         elif action == "delete":
             response = action(
-                earl, headers=headers
+                earl, headers=headers, verify=False
             )
         else:
             response = action(
-                earl, data=data, headers=headers
+                earl, data=data, headers=headers, verify=False
             )
 
         try:
