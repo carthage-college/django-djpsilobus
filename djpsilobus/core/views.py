@@ -1,8 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
-from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
@@ -281,6 +280,40 @@ def dspace_file_search(request):
 
     return response
 
+
+def dspace_dept_courses(request, dept, term, year):
+    if request.method == "GET":
+        if term == "RC":
+            term = ("AG","AK","AM","GB","GC","RB","RC")
+        elif term == "RA":
+            term = ("RA","GA","AA","AB")
+        else:
+            raise Http404
+        courses = sections(code=dept,year=year,sess=term)
+        jay = "["
+        if courses:
+            for c in courses:
+                phile = syllabus_name(c)
+                #secciones.append({"obj":c,"phile":phile})
+                # json encode
+                jay += '{'
+                jay += '''
+                    "crs_no":"{}","phile":"{}","sess":"{}","sec_no":"{}",
+                    "crs_title":"{}","fullname":"{}","need_syllabi":"{}"
+                '''.format(
+                    c.crs_no, phile, c.sess, c.sec_no,
+                    c.crs_title, c.fullname, c[12]
+                )
+                jay += '},'
+            jay = jay[:-1] + "]"
+        else:
+            jay = jay + "]"
+    else:
+        jay = "GET required"
+
+    return HttpResponse(
+        jay, content_type="text/plain; charset=utf-8"
+    )
 
 @portal_auth_required(
     session_var="DSPILOBUS_AUTH", redirect_url=reverse_lazy("access_denied")

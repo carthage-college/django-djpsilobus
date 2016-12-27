@@ -64,6 +64,10 @@ urlpatterns = patterns('djpsilobus.core.views',
         r'^dspace/file/search/$',
         'dspace_file_search', name="dspace_file_search"
     ),
+    url(
+        r'^dspace/(?P<dept>[-\w]+)/(?P<term>[-\w]+)/(?P<year>\d+)/courses/$',
+        'dspace_dept_courses', name="dspace_dept_courses"
+    ),
     # home, with and without department code set
     url(
         r'^(?P<dept>[A-Z_]+)/$', 'home', name="home_dept"
