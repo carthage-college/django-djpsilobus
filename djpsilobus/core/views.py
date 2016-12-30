@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
+from django.core.cache import cache
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.shortcuts import render_to_response
@@ -261,15 +262,16 @@ def dspace_file_search(request):
         jason = []
         content = ""
         if name.strip() != "Staff":
-            s =  Search()
+            s = Search()
             jason = s.file(phile, TITLE_ALT)
         if jason and jason[0].get("name"):
             earl = "{}/bitstream/handle/{}/{}?sequence=1&isAllowed=y".format(
                 settings.DSPACE_URL, jason[0].get("handle"), phile
             )
             response = render_to_response(
-                "view_file.ajax.html", {"earl":earl},
-                context_instance=RequestContext(request)
+                "view_file.ajax.html", {
+                    "earl":earl,'handle':jason[0].get("handle")
+                }, context_instance=RequestContext(request)
             )
         else:
             response = HttpResponse(
@@ -282,35 +284,40 @@ def dspace_file_search(request):
 
 
 def dspace_dept_courses(request, dept, term, year):
-    if request.method == "GET":
-        if term == "RC":
-            term = ("AG","AK","AM","GB","GC","RB","RC")
-        elif term == "RA":
-            term = ("RA","GA","AA","AB")
-        else:
-            raise Http404
+    cache_key = "DSPACE_API_{}_{}_{}".format(dept,term,year)
+    if term == "RC":
+        term = settings.SPRING_TERMS
+    elif term == "RA":
+        term = settings.FALL_TERMS
+    else:
+        raise Http404
+    jay = cache.get(cache_key)
+    if not jay:
         courses = sections(code=dept,year=year,sess=term)
         jay = "["
         if courses:
             for c in courses:
-                phile = syllabus_name(c)
-                #secciones.append({"obj":c,"phile":phile})
-                # json encode
+                phile = "{}.pdf".format(syllabus_name(c))
+                s = Search()
+                jason = s.file(phile, TITLE_ALT)
+                earl = ""
+                if jason and jason[0].get("name"):
+                    earl = "{}/bitstream/handle/{}/{}?sequence=1&isAllowed=y".format(
+                        settings.DSPACE_URL, jason[0].get("handle"), phile
+                    )
                 jay += '{'
                 jay += '''
-                    "crs_no":"{}","phile":"{}","sess":"{}","sec_no":"{}",
+                    "crs_no":"{}","earl":"{}","sess":"{}","sec_no":"{}",
                     "crs_title":"{}","fullname":"{}","need_syllabi":"{}"
                 '''.format(
-                    c.crs_no, phile, c.sess, c.sec_no,
+                    c.crs_no, earl, c.sess, c.sec_no,
                     c.crs_title, c.fullname, c[12]
                 )
                 jay += '},'
             jay = jay[:-1] + "]"
         else:
             jay = jay + "]"
-    else:
-        jay = "GET required"
-
+        cache.set(cache_key, jay, None)
     return HttpResponse(
         jay, content_type="text/plain; charset=utf-8"
     )
