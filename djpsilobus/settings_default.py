@@ -181,8 +181,20 @@ ADMIN_ASSISTANTS = []
 DEV_ADMIN = []
 ADMINISTRATORS = REGISTRAR_ADMIN + ADMIN_ASSISTANTS + DEV_ADMIN
 # year and session for now:
+'''
+AK  Spring I    UNDG
+AM  Spring II   UNDG
+AG  Winter
+GB  Winter Graduate     GRAD
+GC  Spring Graduate     GRAD
+RB  J-Term  UNDG
+RC  Spring  UNDG
+'''
+FALL_TERMS = ("RA","GA","AA","AB")
+SPRING_TERMS = ("AG","AK","AM","GB","GC","RB","RC")
 YEAR=""
-SESS=""
+#SESS=FALL_TERMS
+SESS=SPRING_TERMS
 # logging
 LOG_FILEPATH = os.path.join(os.path.dirname(__file__), "logs/")
 LOG_FILENAME = LOG_FILEPATH + "debug.log"
