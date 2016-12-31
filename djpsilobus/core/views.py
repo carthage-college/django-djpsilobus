@@ -297,24 +297,25 @@ def dspace_dept_courses(request, dept, term, year):
         jay = "["
         if courses:
             for c in courses:
-                phile = "{}.pdf".format(syllabus_name(c))
-                s = Search()
-                jason = s.file(phile, TITLE_ALT)
-                earl = ""
-                if jason and jason[0].get("name"):
-                    earl = "{}/bitstream/handle/{}/{}?sequence=1&isAllowed=y".format(
-                        settings.DSPACE_URL, jason[0].get("handle"), phile
+                if c.need_syllabi:
+                    phile = "{}.pdf".format(syllabus_name(c))
+                    s = Search()
+                    jason = s.file(phile, TITLE_ALT)
+                    earl = ""
+                    if jason and jason[0].get("name"):
+                        earl = "{}/bitstream/handle/{}/{}?sequence=1&isAllowed=y".format(
+                            settings.DSPACE_URL, jason[0].get("handle"), phile
+                        )
+                    jay += '{'
+                    jay += '''
+                        "crs_no":"{}","earl":"{}","sess":"{}","sec_no":"{}",
+                        "crs_title":"{}","fullname":"{}","need_syllabi":"{}"
+                    '''.format(
+                        c.crs_no, earl, c.sess, c.sec_no,
+                        c.crs_title, c.fullname, c[12]
                     )
-                jay += '{'
-                jay += '''
-                    "crs_no":"{}","earl":"{}","sess":"{}","sec_no":"{}",
-                    "crs_title":"{}","fullname":"{}","need_syllabi":"{}"
-                '''.format(
-                    c.crs_no, earl, c.sess, c.sec_no,
-                    c.crs_title, c.fullname, c[12]
-                )
-                jay += '},'
-            jay = jay[:-1] + "]"
+                    jay += '},'
+                jay = jay[:-1] + "]"
         else:
             jay = jay + "]"
         cache.set(cache_key, jay, None)
