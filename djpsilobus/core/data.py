@@ -89,7 +89,7 @@ DEPARTMENT_EXCEPTIONS = {
     'SPN':'MLA','CHN':'MLA','MKT':'MMK','GRK':'CLS','LTN':'CLS','IPE':'_IPE',
     'ACC':'FAC','FIN':'FAC','SSC':'_SSC','ASN':'_ASN','NEU':'_NEU',
     'DIS':'_DIS','GFW':'_GFW','WHE':'_WHE','WMG':'_WMG','PEH':'_PEH',
-    'GBL':'_GBL','CRJ':'_CRJ','ATH':'_ATH','COR':'_WHE','GNR','_GNR'
+    'GBL':'_GBL','CRJ':'_CRJ','ATH':'_ATH','COR':'_WHE','GNR':'_GNR'
 }
 # metadata for creating a new item in a collection
 ITEM_METADATA = {
