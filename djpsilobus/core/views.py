@@ -297,7 +297,7 @@ def dspace_dept_courses(request, dept, term, year):
         jay = "["
         if courses:
             for c in courses:
-                if c.need_syllabi:
+                if c[12] == "Y":
                     phile = "{}.pdf".format(syllabus_name(c))
                     s = Search()
                     jason = s.file(phile, TITLE_ALT)
@@ -315,7 +315,7 @@ def dspace_dept_courses(request, dept, term, year):
                         c.crs_title, c.fullname, c[12]
                     )
                     jay += '},'
-                jay = jay[:-1] + "]"
+            jay = jay[:-1] + "]"
         else:
             jay = jay + "]"
         cache.set(cache_key, jay, None)
