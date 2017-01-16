@@ -37,8 +37,8 @@ DEPARTMENTS = {
     "FIN":"230", #Finance
     "FAC":"Finance and Accounting", # Sub-Community
     "FRN":"205", # French
-    "GNR":"General",
-    "_GNR":"General",
+    "GNR":"261",
+    "_GNR":"261",
     "GEO":"231", #Geography and Earth Science
     "GRM":"232", #German
     "GBL":"233", #Global Heritage Program
