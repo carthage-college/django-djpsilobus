@@ -1,10 +1,46 @@
-{% load ifusergroup %}
+{% load filters %}
+{% comment %}
+    AA  Fall I  UNDG
+    AB  Fall II     UNDG
+    AG  Winter  UNDG
+    AK  Spring I    UNDG
+    AM  Spring II   UNDG
+    AS  Summer I    UNDG
+    AT  Summer II   UNDG
+
+    GA  Fall Graduate   GRAD
+    GB  Winter Graduate     GRAD
+    GC  Spring Graduate     GRAD
+    GE  Summer Graduate     GRAD
+
+    RA  Fall    UNDG
+    RB  J-Term  UNDG
+    RC  Spring  UNDG
+    RE  Summer  UNDG
+
+{% endcomment %}
 {% for c in courses %}
   <tr>
     <td>{{c.obj.crs_no}}</td>
     <td>{{c.obj.crs_title}}</td>
     <td align="center">{{c.obj.sec_no}}</td>
-    <td align="center">{{c.obj.sess}}</td>
+    <td align="center">
+    {% spaceless %}
+    {% if c.obj.sess == 'RB' %}
+        J-Term
+    {% else %}{% if c.obj.sess == 'AG' or c.obj.sess == 'GB' %}
+        Winter
+    {% else %}{% if c.obj.sess == 'RC' or c.obj.sess == 'AK' or c.obj.sess == 'AM' or c.obj.sess == 'GC' %}
+        Spring
+    {% else %}{% if c.obj.sess == 'AS' or c.obj.sess == 'AT' or c.obj.sess = 'GE' or c.obj.sess = 'RE' %}
+        Summer
+    {% else %}{% if c.obj.sess == 'RA' or c.obj.sess == 'GA' or c.obj.sess = 'AA' or c.obj.sess = 'AB' %}
+        Fall
+    {% else %}
+        {{c.obj.sess}}
+    {% endif %}{% endif %}{% endif %}{% endif %}{% endif %}
+    {% endspaceless %}
+    </td>
     <td>{{c.obj.fullname}}</td>
     <td class="section" data-phile="{{c.phile}}"
       {% if c.obj.fac_id == user.id %}data-faculty="true"{% endif %}

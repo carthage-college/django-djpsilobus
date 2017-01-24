@@ -259,7 +259,8 @@ $(function(){
               {{faculty_name}}'s Syllabi:
             {% endif %}
           {% endif %}
-          {{sess}} {{year}}
+          {{sess}}{% if sess == "Spring" %} and J-Term {% endif %}
+          {{year}}
         </h2>
         <div class="table-responsive">
           <form action="{% url 'home' %}" method="post" id="syllabus-upload"
