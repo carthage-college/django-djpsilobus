@@ -61,6 +61,7 @@ DEPARTMENTS = {
     "MUS":"240", #Music
     "NEU":"241", #Neuroscience Program
     "_NEU":"241", #Neuroscience Program
+    "NSG":"242", #Nursing
     "NUR":"242", #Nursing
     "PEH":"243", #Physical Education/Health Program
     "_PEH":"243", #Physical Education/Health Program
@@ -87,7 +88,7 @@ DEPARTMENTS = {
 DEPARTMENT_EXCEPTIONS = {
     'ESN':'_ESN','MGT':'MMK','ARH':'ART','JPN':'MLA','FRN':'MLA','GRM':'MLA',
     'SPN':'MLA','CHN':'MLA','MKT':'MMK','GRK':'CLS','LTN':'CLS','IPE':'_IPE',
-    'ACC':'FAC','FIN':'FAC','SSC':'_SSC','ASN':'_ASN','NEU':'_NEU',
+    'ACC':'FAC','FIN':'FAC','SSC':'_SSC','ASN':'_ASN','NEU':'_NEU','NSG':'NUR',
     'DIS':'_DIS','GFW':'_GFW','WHE':'_WHE','WMG':'_WMG','PEH':'_PEH',
     'GBL':'_GBL','CRJ':'_CRJ','ATH':'_ATH','COR':'_WHE','GNR':'_GNR'
 }
