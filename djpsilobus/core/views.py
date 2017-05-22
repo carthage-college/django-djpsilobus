@@ -31,14 +31,11 @@ from openpyxl.writer.excel import save_virtual_workbook
 
 import re
 import os
-import csv
 import datetime
 import json
 import magic
-import logging
 import tarfile
 
-logger = logging.getLogger(__name__)
 YEAR = datetime.date.today().year
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
@@ -105,8 +102,6 @@ def home(request, dept=None):
     dept_list = []
     if admin or depts.get('depts'):
         for c,d in depts['depts'].iteritems():
-        #for c,d in depts['depts'].items():
-        #for key in depts['depts'].keys():
             faculty = department_faculty(c, YEAR)
             dept_list.append({
                 'dept_name':d['dept_name'],
