@@ -84,8 +84,8 @@ def create_item(item):
     data['metadata'][5]['value'] = TERM_LIST[item["term"]]
     uri = "collections/{}/items".format(collection_id)
 
-    print "data = {}".format(data)
-    print "uri = {}".format(uri)
+    #print "data = {}".format(data)
+    #print "uri = {}".format(uri)
 
     manager = Manager()
     new_item = manager.request(uri, "post", data)
