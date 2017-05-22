@@ -17,7 +17,6 @@
     RB  J-Term  UNDG
     RC  Spring  UNDG
     RE  Summer  UNDG
-
 {% endcomment %}
 {% for c in courses %}
   <tr>
@@ -32,9 +31,9 @@
         Winter
     {% else %}{% if c.obj.sess == 'RC' or c.obj.sess == 'AK' or c.obj.sess == 'AM' or c.obj.sess == 'GC' %}
         Spring
-    {% else %}{% if c.obj.sess == 'AS' or c.obj.sess == 'AT' or c.obj.sess = 'GE' or c.obj.sess = 'RE' %}
+    {% else %}{% if c.obj.sess == 'AS' or c.obj.sess == 'AT' or c.obj.sess == 'GE' or c.obj.sess == 'RE' %}
         Summer
-    {% else %}{% if c.obj.sess == 'RA' or c.obj.sess == 'GA' or c.obj.sess = 'AA' or c.obj.sess = 'AB' %}
+    {% else %}{% if c.obj.sess == 'RA' or c.obj.sess == 'GA' or c.obj.sess == 'AA' or c.obj.sess == 'AB' %}
         Fall
     {% else %}
         {{c.obj.sess}}
