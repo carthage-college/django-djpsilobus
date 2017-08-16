@@ -40,6 +40,11 @@ YEAR = datetime.date.today().year
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
 
+
+import logging
+logger = logging.getLogger(__name__)
+
+
 def get_session_term():
     '''
     AA  Fall I  UNDG
@@ -62,6 +67,7 @@ def get_session_term():
     '''
     # constant for now
     return settings.SESS
+
 
 @portal_auth_required(
     session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied')
@@ -92,7 +98,7 @@ def home(request, dept=None):
         objs = do_esql(sql)
         depts = OrderedDict()
         for o in objs:
-            depts[(o.dept_code)] = {
+            depts[o.dept_code] = {
                 'dept_name':o.dept_name, 'dept_code':o.dept_code,
                 'div_name': o.div_name, 'div_code': o.div_code
             }
@@ -130,7 +136,8 @@ def home(request, dept=None):
     # courses in other department e.g. renaud
     if not fid and not courses:
         fid = uid
-        # faculty courses
+    # faculty courses
+    if not courses:
         courses = sections(year=YEAR,sess=SESS,fid=fid)
         if courses:
             faculty_name = courses[0][11]
@@ -145,7 +152,6 @@ def home(request, dept=None):
     phile = None
     if request.method=='POST' and request.FILES:
         # complete path to directory in which we will store the file
-
         syllabi = request.FILES.getlist('syllabi[]')
         # POST does not include empty file fields in [] so we use this
         # hidden field and javascript event to track
