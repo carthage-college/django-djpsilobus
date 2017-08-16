@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load livewhale_api %}
 {% block extra_javascript %}
 <script src="//www.carthage.edu/static/vendor/dashboard/js/plugins/dataTables/jquery.dataTables.js"></script>
 <script src="//www.carthage.edu/static/vendor/dashboard/js/plugins/dataTables/dataTables.bootstrap.js"></script>
@@ -6,21 +7,6 @@
     type="text/javascript"></script>
 <script type="text/javascript">
 $(function(){
-  var table = $('.courses-data').dataTable({
-    "bPaginate": false,
-    "bFilter": false,
-     ordering:false,
-     columnDefs: [
-       {
-        width: 90, targets: 0,
-        width: 30, targets: 2,
-        width: 30, targets: 3,
-        width: 150, targets: 4,
-        width: 350, targets: 5
-       }
-     ],
-     fixedColumns: true
-  });
   $(".required > input").addClass("required");
   $(".required > select").addClass("required");
   $(".required > textarea").addClass("required");
@@ -103,7 +89,7 @@ $(function(){
 {% block extra_style %}
     {{block.super}}
     <style type="text/css">
-        td, select, input, p {font-size:.9em;}
+        td, select, input {font-size:.9em;}
         select, input {margin-bottom:5px;}
         fieldset {
             border: 1px solid silver;
@@ -177,6 +163,10 @@ $(function(){
           Greetings, {{user.first_name}} {{user.last_name}}
         {% endif %}
       </h2>
+      <div class="alert">
+      {% get_lw_content as intro blurbs 2563 %}
+      {{intro.body}}
+      </div>
       {% if messages %}
         {% for message in messages %}
           <div{% if message.extra_tags %} class="alert alert-{{ message.extra_tags }}{% endif %} col-lg-6">
