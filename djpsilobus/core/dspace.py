@@ -93,7 +93,10 @@ class Manager(object):
             with open(phile,'rb') as payload:
                 files={phile: payload}
                 #files={'file': payload}
-                #files = {'file': (phile, payload, 'application/pdf', {'Expires': '0'})}
+                #files = {
+                    #'file': (phile, payload, 'application/pdf',
+                    #{'Expires': '0'})
+                #}
                 #data = {'name': phile}
                 response = action(
                     earl, files=files, headers=headers, verify=False
