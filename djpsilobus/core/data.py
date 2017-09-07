@@ -85,12 +85,15 @@ DEPARTMENTS = {
     "WMG":"253", #Women and Gender Studies
     "_WMG":"253" #Women and Gender Studies
 }
+# each name maps to a value that should be used as the Department code
+# e.g. FRN (French) is an MLA (Modern Languages) Department
 DEPARTMENT_EXCEPTIONS = {
     'ESN':'_ESN','MGT':'MMK','ARH':'ART','JPN':'MLA','FRN':'MLA','GRM':'MLA',
     'SPN':'MLA','CHN':'MLA','MKT':'MMK','GRK':'CLS','LTN':'CLS','IPE':'_IPE',
     'ACC':'FAC','FIN':'FAC','SSC':'_SSC','ASN':'_ASN','NEU':'_NEU','NSG':'NUR',
     'DIS':'_DIS','GFW':'_GFW','WHE':'_WHE','WMG':'_WMG','PEH':'_PEH',
-    'GBL':'_GBL','CRJ':'_CRJ','ATH':'_ATH','COR':'_WHE','GNR':'_GNR'
+    'GBL':'_GBL','CRJ':'_CRJ','ATH':'_ATH','COR':'_WHE','GNR':'_GNR',
+    'DNC','THR'
 }
 # metadata for creating a new item in a collection
 ITEM_METADATA = {
