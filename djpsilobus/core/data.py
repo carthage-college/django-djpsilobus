@@ -27,6 +27,7 @@ DEPARTMENTS = {
     "_CRJ":"220", #Criminal Justice Program
     "DIS":"Discovery Program",
     "_DIS":"Discovery Program",
+    "DNC":"251", #Dance = Theatre
     "ECN":"221", #Economics
     "EDU":"222", #Education
     "ENG":"223", #English
