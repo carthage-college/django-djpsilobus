@@ -198,7 +198,8 @@ def home(request, dept=None):
                 if phile:
                     upload = '{}/{}'.format(sendero, phile)
                     # verify file type is PDF
-                    if magic.from_file(upload, mime=True) == 'application/pdf':
+                    mime = magic.from_file(upload, mime=True)
+                    if mime == 'application/pdf' or mime == 'application/octet-stream':
                         # create a new parent item that will contain
                         # the uploaded file
                         item = {
