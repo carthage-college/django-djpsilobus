@@ -144,9 +144,17 @@ def home(request, dept=None):
 
     secciones = []
     if courses:
-        for c in courses:
-            phile = syllabus_name(c)
-            secciones.append({'obj':c,'phile':phile})
+        for course in courses:
+            phile = syllabus_name(course)
+            obj = {}
+            for n,v in course.items():
+                if n in ['crs_title','firstname','lastname']:
+                    try:
+                        v = u'{}'.format(v.decode('cp1252'))
+                    except:
+                        pass
+                obj[n] = v
+            secciones.append({'obj':obj,'phile':phile})
 
     # file upload
     phile = None
