@@ -36,7 +36,8 @@ import json
 import magic
 import tarfile
 
-YEAR = datetime.date.today().year
+#YEAR = datetime.date.today().year
+YEAR = settings.YEAR
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
 
@@ -315,22 +316,24 @@ def dspace_dept_courses(request, dept, term, year):
                         earl = '{}/bitstream/handle/{}/{}?sequence=1&isAllowed=y'.format(
                             settings.DSPACE_URL, jason[0].get('handle'), phile
                         )
-                    jay += "{"
-                    jay += """
+                    jay += '{'
+                    # json requires doubl quotes
+                    jay += '''
                         "crs_no":"{}","earl":"{}","sess":"{}","sec_no":"{}",
                         "crs_title":"{}","fullname":"{}","need_syllabi":"{}"
-                    """.format(
+                    '''.format(
                         c.crs_no, earl, c.sess, c.sec_no,
                         c.crs_title, c.fullname, c[12]
                     )
                     jay += '},'
-            jay = jay[:-1] + "]"
+            jay = jay[:-1] + ']'
         else:
-            jay = jay + "]"
+            jay = jay + ']'
         cache.set(cache_key, jay, None)
     return HttpResponse(
         jay, content_type='text/plain; charset=utf-8'
     )
+
 
 @portal_auth_required(
     session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied')
