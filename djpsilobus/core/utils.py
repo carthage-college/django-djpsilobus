@@ -59,11 +59,12 @@ def create_item(item):
         filter_by(cat = cat).first()
     if c and c.abstr:
         abstr = c.abstr.split('\n')
-        if len(abstr) > 1 and abstr[2] != "":
-            #abstr = u"{}".format(abstr[2].decode('utf-8'))
-            abstr = abstr[2].decode("cp1252", "ignore")
+        if len(abstr) > 1:
+            try:
+                abstr = abstr[2].decode("cp1252", "ignore")
+            except:
+                abstr = c.abstr.decode("cp1252", "ignore")
         else:
-            #abstr = u"{}".format(c.abstr.decode('utf-8'))
             abstr = c.abstr.decode("cp1252", "ignore")
     else:
         abstr = ""
