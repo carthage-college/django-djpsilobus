@@ -5,7 +5,18 @@ from django.core.cache import cache
 import json
 import requests
 
+"""
+Suppress InsecureRequestWarning
+https://stackoverflow.com/questions/27981545/suppress-insecurerequestwarning-unverified-https-request-is-being-made-in-pytho
+"""
+#from requests.packages.urllib3.exceptions import InsecureRequestWarning
+#requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 REST_URL = settings.DSPACE_REST_URL
+
+
 def _get_token():
     # obtain our token from DSpace server
     login_url = "{}/login".format(REST_URL)

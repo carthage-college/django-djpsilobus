@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.template import RequestContext
 from django.shortcuts import render
 from django.core.urlresolvers import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
