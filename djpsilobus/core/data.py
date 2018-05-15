@@ -35,8 +35,9 @@ DEPARTMENTS = {
     "ENV":"224", #Environmental Science
     "_ENV":"224", #Environmental Science
     "EXS":"225", #Exercise and Sport Science
-    "FIN":"230", #Finance
     "FAC":"Finance and Accounting", # Sub-Community
+    "FAR":"209",
+    "FIN":"230", #Finance
     "FRN":"205", # French
     "GNR":"261",
     "_GNR":"261",
@@ -94,7 +95,7 @@ DEPARTMENT_EXCEPTIONS = {
     'ACC':'FAC','FIN':'FAC','SSC':'_SSC','ASN':'_ASN','NEU':'_NEU','NSG':'NUR',
     'DIS':'_DIS','GFW':'_GFW','WHE':'_WHE','WMG':'_WMG','PEH':'_PEH',
     'GBL':'_GBL','CRJ':'_CRJ','ATH':'_ATH','COR':'_WHE','GNR':'_GNR',
-    'DNC':'THR','ENV':'_ENV'
+    'DNC':'THR','ENV':'_ENV','FAR':'ART'
 }
 # metadata for creating a new item in a collection
 ITEM_METADATA = {
