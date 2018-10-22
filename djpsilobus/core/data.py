@@ -61,6 +61,7 @@ DEPARTMENTS = {
     "MTH":"202", #Mathematics
     "MLA":"207", #Modern Languages
     "MUS":"240", #Music
+    "NAT":"261", #General
     "NEU":"241", #Neuroscience Program
     "_NEU":"241", #Neuroscience Program
     "NSG":"242", #Nursing
