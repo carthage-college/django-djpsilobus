@@ -115,8 +115,12 @@ def sheet(ws, division, department, courses):
     # create a list for each row and insert into workbook
     for c in courses:
         section = []
-        for course in c:
-            section.append(course)
+        for item in c:
+            # convert strings in case there are funky characters
+            if isinstance(item, str):
+                section.append(item.decode('cp1252').encode('utf-8'))
+            else:
+                section.append(item)
 
         # check for syllabus
         phile = syllabus_name(c)
