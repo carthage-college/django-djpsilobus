@@ -35,14 +35,8 @@ import json
 import magic
 import tarfile
 
-#YEAR = datetime.date.today().year
-YEAR = settings.YEAR
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
-
-
-import logging
-logger = logging.getLogger(__name__)
 
 
 def get_session_term():

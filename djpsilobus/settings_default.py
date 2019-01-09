@@ -3,6 +3,7 @@ Django settings for project.
 """
 #from djzbar.settings import INFORMIX_EARL_TEST as INFORMIX_EARL
 from djzbar.settings import INFORMIX_EARL_PROD as INFORMIX_EARL
+from djtools.fields import TODAY
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os.path
@@ -190,11 +191,13 @@ GC  Spring Graduate     GRAD
 RB  J-Term  UNDG
 RC  Spring  UNDG
 '''
-FALL_TERMS = ("RA","GA","AA","AB")
-SPRING_TERMS = ("AG","AK","AM","GB","GC","RB","RC")
-YEAR=""
+YEAR = TODAY.year
+FALL_TERMS = ('RA','GA','AA','AB')
+SPRING_TERMS = ('RC','AG','AK','AM','GB','GC','RB')
+SUMMER_TERMS = ('AS','AT','GE','RE')
 #SESS=FALL_TERMS
-SESS=SPRING_TERMS
+#SESS=SPRING_TERMS
+SESS = SPRING_TERMS + SUMMER_TERMS + FALL_TERMS
 # logging
 LOG_FILEPATH = os.path.join(os.path.dirname(__file__), "logs/")
 LOG_FILENAME = LOG_FILEPATH + "debug.log"
