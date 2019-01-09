@@ -37,6 +37,7 @@ import tarfile
 
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
+YEAR = settings.YEAR
 
 
 def get_session_term():
