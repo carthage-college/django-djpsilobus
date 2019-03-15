@@ -5,18 +5,14 @@ import signal
 import sys
 
 # python
-sys.path.append('/usr/lib/python2.7/')
-sys.path.append('/usr/lib/python2.7/dist-packages/')
-sys.path.append('/usr/local/lib/python2.7/dist-packages/')
-sys.path.append('/data2/django_1.8/')
-sys.path.append('/data2/django_projects/')
-sys.path.append('/data2/django_third/')
+sys.path.append('/data2/python_venv/2.7/djpsilobus/lib/python2.7/')
+sys.path.append('/data2/python_venv/2.7/djpsilobus/lib/python2.7/site-packages/')
+sys.path.append('/data2/python_venv/2.7/djpsilobus/lib/django_projects/')
+sys.path.append('/data2/python_venv/2.7/djpsilobus/lib/django-djpsilobus/')
 # django
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djskeletor.settings")
-os.environ.setdefault("PYTHON_EGG_CACHE", "/var/cache/python/.python-eggs")
-os.environ.setdefault("TZ", "America/Chicago")
-# for requests package that was barfing
-os.environ['PYTHONWARNINGS']="ignore:Unverified HTTPS request"
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djpsilobus.settings')
+os.environ.setdefault('PYTHON_EGG_CACHE', '')
+os.environ.setdefault('TZ', 'America/Chicago')
 # informix
 os.environ['INFORMIXSERVER'] = ''
 os.environ['DBSERVERNAME'] = ''
@@ -25,11 +21,12 @@ os.environ['ODBCINI'] = ''
 os.environ['ONCONFIG'] = ''
 os.environ['INFORMIXSQLHOSTS'] = ''
 os.environ['LD_LIBRARY_PATH'] = '$INFORMIXDIR/lib:$INFORMIXDIR/lib/esql:$INFORMIXDIR/lib/tools:/usr/lib/apache2/modules:$INFORMIXDIR/lib/cli'
-os.environ['LD_RUN_PATH'] = os.environ['LD_LIBRARY_PATH']
+os.environ['LD_RUN_PATH'] = '$INFORMIXDIR/lib:$INFORMIXDIR/lib/esql:$INFORMIXDIR/lib/tools:/usr/lib/apache2/modules'
 # wsgi
 from django.core.wsgi import get_wsgi_application
 
 # NOTE: remove the try/except in production
+#application = get_wsgi_application()
 try:
     application = get_wsgi_application()
 except Exception:
@@ -39,4 +36,3 @@ except Exception:
         os.kill(os.getpid(), signal.SIGINT)
         time.sleep(2.5)
     exit(-1)
-
