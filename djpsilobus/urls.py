@@ -78,3 +78,4 @@ urlpatterns = [
         r'^$', views.home, name='home'
     )
 ]
+urlpatterns += url("admin/", include('loginas.urls')),
