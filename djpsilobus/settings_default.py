@@ -74,6 +74,8 @@ INSTALLED_APPS = (
     'djpsilobus.core',
     # needed for template tags
     'djtools',
+    # third party apps
+    'loginas'
 )
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
