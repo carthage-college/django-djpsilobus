@@ -141,8 +141,10 @@ $(function(){
 {% block content %}
 <div class="row">
     <div class="col-lg-12">
-      <h2 id="header">
-        {% if depts %}
+      <div class="col-lg-10">
+        <div class="col-lg-4" style="margin-top:20px;">
+          <span style="font-weight:700; font-size:30px;" id="header">
+          {% if depts %}
           {% if dean_chair == "dean" %}
             <a href="{% url 'download_division' division.code %}"><i class="fa fa-download syllabi-download"
               title="Download all {{division.name}} Syllabi as a compressed archive" aria-hidden="true"></i></a>
@@ -159,17 +161,43 @@ $(function(){
             class="btn btn-success collapsed" title="{{user.id}}">
             Hide Departments
           </button>
-        {% else %}
+          {% else %}
           Greetings, {{user.first_name}} {{user.last_name}}
-        {% endif %}
-      </h2>
-      <div class="alert">
+          {% endif %}
+          </span>
+        </div>
+        <div class="col-lg-4" style="margin-top:30px;">
+          <form name="switcher" id="switcher" action="." method="get">
+          <label for="switcher_term">
+              <select name="term" id="switcher_term">
+                  <option value="">--Term--</option>
+                  <option value="spring">Spring</option>
+                  <option value="summer">Summer</option>
+                  <option value="fall">Fall</option>
+              </select>
+          </label>
+          <label for="switcher_year">
+              <select name="year" id="switcher_year">
+                  <option value="">--Year--</option>
+                  <option value="2019">2019</option>
+                  <option value="2018">2018</option>
+                  <option value="2017">2017</option>
+              </select>
+          </label>
+          <label for="switcher_submit">
+          <label for="switcher_submit">
+            <input type="submit" name="switcher_submit" value="Switch" id="switcher_submit">
+          </label>
+          </form>
+        </div>
+      </div>
+      <div class="alert" style="clear:both;">
       {% get_lw_content as intro blurbs 2563 %}
       {{intro.body}}
       </div>
       {% if messages %}
         {% for message in messages %}
-          <div{% if message.extra_tags %} class="alert alert-{{ message.extra_tags }}{% endif %} col-lg-6">
+          <div{% if message.extra_tags %} class="alert alert-{{ message.extra_tags }}{% endif %} col-lg-6" style="clear:both;">
             <h3>
               {% if message.level == 40 %}Error{% else %}Success {% endif %}
             </h3>
@@ -186,6 +214,10 @@ $(function(){
   <div class="col-lg-12">
     <div class="panel panel-default">
       <div class="panel-body">
+        <h2>
+          {{term|title}}
+          {{year}}
+        </h2>
           <form action="{% url 'home' %}" method="post"
             name="faculty-courses"
             id="faculty-courses">
@@ -207,15 +239,15 @@ $(function(){
                   </select>
                 </div>
                 <div class="form-row">
-                  <a href="{% url 'home_dept' d.dept_code %}" class="fleft">
+                  <a href="{% url 'home_all' d.dept_code term year %}" class="fleft">
                     View all {{d.dept_name}} courses
                   </a>
-                  <a href="{% url 'download_department' d.div_code d.dept_code %}" class="fright">
+                  <a href="{% url 'download_department' d.div_code d.dept_code term year %}" class="fright">
                     <i class="fa fa-download fa-2x syllabi-download"
                     title="Download all {{d.dept_name}} syllabi as a compressed archive"
                     aria-hidden="true"></i>
                   </a>
-                  <a href="{% url 'openxml_department' d.div_code d.dept_code %}"
+                  <a href="{% url 'openxml_department' d.div_code d.dept_code term year %}"
                     class="fright" style="margin:-5px 5px 0 0;font-size:1.7em;">
                     <i class="fa fa-file-excel-o syllabi-openxml"
                     title="Export all {{d.dept_name}} syllabi data in OpenXML (.xlsx) format"
@@ -241,17 +273,18 @@ $(function(){
       <div class="panel-body">
         <h2>
           {% if department %}
-            {{department}} Syllabi:
+            {{department}}
           {% else %}
             {% if not department and fid == user.id %}
               My Syllabi:
             {% else %}
-              {{faculty_name}}'s Syllabi:
+              {{faculty_name}}
             {% endif %}
           {% endif %}
+          {{term|title}}
           {{year}}
         </h2>
-        <div class="table-responsive">
+        <div class="table-responsive" style="clear:both;">
           <form action="{% url 'home' %}" method="post" id="syllabus-upload"
             enctype="multipart/form-data">
             {% csrf_token %}

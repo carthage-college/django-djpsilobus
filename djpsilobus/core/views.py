@@ -67,8 +67,24 @@ def get_session_term():
 @portal_auth_required(
     session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied')
 )
-def home(request, dept=None):
-    SESS = get_session_term()
+def home(request, dept=None, term=None, YEAR=None):
+    # change year/sess
+    if not YEAR:
+        YEAR = settings.YEAR
+    if request.GET.get('year'):
+        YEAR = request.GET.get('year')
+    if not term:
+        term = request.GET.get('term')
+    if term == 'spring':
+        SESS = settings.SPRING_TERMS
+    elif term == 'fall':
+        SESS = settings.FALL_TERMS
+    elif term == 'summer':
+        SESS = settings.SUMMER_TERMS
+    else:
+        SESS = get_session_term()
+    if not term:
+        term = settings.TERM
     # current user
     user = request.user
     uid = user.id
@@ -247,7 +263,7 @@ def home(request, dept=None):
         request, 'home.html', {
             'depts':dept_list,'courses':secciones,'department':dept,
             'faculty_name':faculty_name,'fid':fid,'year':YEAR,
-            'sess':TERM_LIST[SESS[0]],'phile':phile,'dean_chair':dean_chair,
+            'term':term,'phile':phile,'dean_chair':dean_chair,
             'division':{'name':division_name,'code':division_code},
             'admin':admin
         }
@@ -332,7 +348,7 @@ def dspace_dept_courses(request, dept, term, year):
 @portal_auth_required(
     session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied')
 )
-def download(request, division, department=''):
+def download(request, division, department=None, term=None, year=None):
     response = HttpResponse(content_type='application/x-gzip')
     name = '{}_{}_syllabi'.format(division, department)
     response['Content-Disposition'] = 'attachment; filename={}.tar.gz'.format(
@@ -340,9 +356,23 @@ def download(request, division, department=''):
     )
     tar_ball = tarfile.open(fileobj=response, mode='w:gz')
     directory = False
-    for sess in get_session_term():
+    if not year:
+        year = YEAR
+    if not term:
+        TERM = get_session_term()
+    else:
+        if term == 'spring':
+            TERM = settings.SPRING_TERMS
+        elif term == 'summer':
+            TERM = settings.SUMMER_TERMS
+        elif term == 'fall':
+            TERM = settings.FALL_TERMS
+        else:
+            TERM = get_session_term()
+
+    for sess in TERM:
         directory = '{}{}/{}/{}/{}'.format(
-            settings.UPLOADS_DIR,YEAR,sess,division,department
+            settings.UPLOADS_DIR,year,sess,division,department
         )
         if os.path.isdir(directory):
             tar_ball.add(directory, arcname=name)
@@ -365,15 +395,29 @@ def download(request, division, department=''):
 @portal_auth_required(
     session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied')
 )
-def openxml(request, division, department=''):
+def openxml(request, division, department=None, term=None, year=None):
 
     wb = load_workbook('{}template.xlsx'.format(settings.MEDIA_ROOT))
 
     # obtain the active worksheet
     template = wb.active
 
+    if not year:
+        year = YEAR
+    if not term:
+        TERM = get_session_term()
+    else:
+        if term == 'spring':
+            TERM = settings.SPRING_TERMS
+        elif term == 'summer':
+            TERM = settings.SUMMER_TERMS
+        elif term == 'fall':
+            TERM = settings.FALL_TERMS
+        else:
+            TERM = get_session_term()
+
     if department:
-        courses = sections(code=department,year=YEAR,sess=get_session_term())
+        courses = sections(code=department,year=YEAR,sess=TERM)
         if courses:
             sheet(template, division, department, courses)
         else:
@@ -388,7 +432,7 @@ def openxml(request, division, department=''):
     else:
         depts = division_departments(division)
         for d in depts:
-            courses = sections(code=d.dept,year=YEAR,sess=get_session_term())
+            courses = sections(code=d.dept,year=YEAR,sess=TERM)
             if courses:
                 ws = wb.copy_worksheet(template)
                 ws.title = d.dept

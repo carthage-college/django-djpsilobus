@@ -45,6 +45,10 @@ urlpatterns = [
     ),
     # downloads
     url(
+        r'^(?P<division>[A-Z_]+)/(?P<department>[A-Z_]+)/(?P<term>[-\w]+)/(?P<year>\d+)/download/$',
+        views.download, name='download_department'
+    ),
+    url(
         r'^(?P<division>[A-Z_]+)/(?P<department>[A-Z_]+)/download/$',
         views.download, name='download_department'
     ),
@@ -53,6 +57,10 @@ urlpatterns = [
         views.download, name='download_division'
     ),
     # OpenXML export
+    url(
+        r'^(?P<division>[A-Z_]+)/(?P<department>[A-Z_]+)/(?P<term>[-\w]+)/(?P<year>\d+)/openxml/$',
+        views.openxml, name='openxml_department'
+    ),
     url(
         r'^(?P<division>[A-Z_]+)/(?P<department>[A-Z_]+)/openxml/$',
         views.openxml, name='openxml_department'
@@ -70,7 +78,10 @@ urlpatterns = [
         r'^dspace/(?P<dept>[-\w]+)/(?P<term>[-\w]+)/(?P<year>\d+)/courses/$',
         views.dspace_dept_courses, name='dspace_dept_courses'
     ),
-    # home, with and without department code set
+    # home, with and without department code, year, term.
+    url(
+        r'^(?P<dept>[A-Z_]+)/(?P<term>[-\w]+)/(?P<YEAR>\d+)/$', views.home, name='home_all'
+    ),
     url(
         r'^(?P<dept>[A-Z_]+)/$', views.home, name='home_dept'
     ),
