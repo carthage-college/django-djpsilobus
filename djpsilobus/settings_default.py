@@ -200,6 +200,7 @@ SUMMER_TERMS = ('AS','AT','GE','RE')
 #SESS=FALL_TERMS
 #SESS=SPRING_TERMS
 SESS = SPRING_TERMS + SUMMER_TERMS + FALL_TERMS
+TERM = 'spring'
 # logging
 LOG_FILEPATH = os.path.join(os.path.dirname(__file__), "logs/")
 LOG_FILENAME = LOG_FILEPATH + "debug.log"
