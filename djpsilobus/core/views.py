@@ -21,6 +21,7 @@ from djzbar.core.sql import ACADEMIC_DEPARTMENTS
 from djzbar.constants import TERM_LIST
 
 from djtools.fields.helpers import handle_uploaded_file
+from djtools.fields import TODAY
 
 from os.path import join
 from collections import OrderedDict
@@ -37,7 +38,7 @@ import tarfile
 
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
-YEAR = settings.YEAR
+YEARS =  [(x, x) for x in reversed(xrange(2016,datetime.date.today().year +1))]
 
 
 def get_session_term():
@@ -60,8 +61,19 @@ def get_session_term():
     RC  Spring  UNDG
     RE  Summer  UNDG
     '''
-    # constant for now
-    return settings.SESS
+
+    now = datetime.datetime.now()
+    if now.month >= 1 and now.month <= 5:
+        sess = settings.SPRING_TERMS
+        term = 'spring'
+    elif now.month >= 6 and now.month <= 8:
+        sess = settings.SUMMER_TERMS
+        term = 'summer'
+    else:
+        sess = settings.FALL_TERMS
+        term = 'fall'
+
+    return {'term':term, 'sess':sess}
 
 
 @portal_auth_required(
@@ -70,7 +82,7 @@ def get_session_term():
 def home(request, dept=None, term=None, YEAR=None):
     # change year/sess
     if not YEAR:
-        YEAR = settings.YEAR
+        YEAR = TODAY.year
     if request.GET.get('year'):
         YEAR = request.GET.get('year')
     if not term:
@@ -82,9 +94,9 @@ def home(request, dept=None, term=None, YEAR=None):
     elif term == 'summer':
         SESS = settings.SUMMER_TERMS
     else:
-        SESS = get_session_term()
+        SESS = get_session_term()['sess']
     if not term:
-        term = settings.TERM
+        term = get_session_term()['term']
     # current user
     user = request.user
     uid = user.id
@@ -262,7 +274,7 @@ def home(request, dept=None, term=None, YEAR=None):
     return render(
         request, 'home.html', {
             'depts':dept_list,'courses':secciones,'department':dept,
-            'faculty_name':faculty_name,'fid':fid,'year':YEAR,
+            'faculty_name':faculty_name,'fid':fid,'year':YEAR,'years':YEARS,
             'term':term,'phile':phile,'dean_chair':dean_chair,
             'division':{'name':division_name,'code':division_code},
             'admin':admin
@@ -357,9 +369,10 @@ def download(request, division, department=None, term=None, year=None):
     tar_ball = tarfile.open(fileobj=response, mode='w:gz')
     directory = False
     if not year:
-        year = YEAR
+        year= TODAY.year
     if not term:
-        TERM = get_session_term()
+        #TERM = get_session_term()
+        TERM = get_session_term()['sess']
     else:
         if term == 'spring':
             TERM = settings.SPRING_TERMS
@@ -368,7 +381,8 @@ def download(request, division, department=None, term=None, year=None):
         elif term == 'fall':
             TERM = settings.FALL_TERMS
         else:
-            TERM = get_session_term()
+            #TERM = get_session_term()
+            TERM = get_session_term()['sess']
 
     for sess in TERM:
         directory = '{}{}/{}/{}/{}'.format(
@@ -403,9 +417,10 @@ def openxml(request, division, department=None, term=None, year=None):
     template = wb.active
 
     if not year:
-        year = YEAR
+        year= TODAY.year
     if not term:
-        TERM = get_session_term()
+        #TERM = get_session_term()
+        TERM = get_session_term()['sess']
     else:
         if term == 'spring':
             TERM = settings.SPRING_TERMS
@@ -414,7 +429,8 @@ def openxml(request, division, department=None, term=None, year=None):
         elif term == 'fall':
             TERM = settings.FALL_TERMS
         else:
-            TERM = get_session_term()
+            #TERM = get_session_term()
+            TERM = get_session_term()['sess']
 
     if department:
         courses = sections(code=department,year=YEAR,sess=TERM)

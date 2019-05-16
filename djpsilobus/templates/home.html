@@ -167,9 +167,9 @@ $(function(){
           </span>
         </div>
         <div class="col-lg-4" style="margin-top:30px;">
-          <form name="switcher" id="switcher" action="." method="get">
+          <form name="switcher" id="switcher" action="{% url 'home' %}" method="get">
           <label for="switcher_term">
-              <select name="term" id="switcher_term">
+              <select name="term" id="switcher_term" class="form-control">
                   <option value="">--Term--</option>
                   <option value="spring">Spring</option>
                   <option value="summer">Summer</option>
@@ -177,16 +177,16 @@ $(function(){
               </select>
           </label>
           <label for="switcher_year">
-              <select name="year" id="switcher_year">
+              <select name="year" id="switcher_year" class="form-control">
                   <option value="">--Year--</option>
-                  <option value="2019">2019</option>
-                  <option value="2018">2018</option>
-                  <option value="2017">2017</option>
+                  {% for y in years %}
+                  <option value="{{y.0}}">{{y.1}}</option>
+                  {% endfor %}
               </select>
           </label>
           <label for="switcher_submit">
           <label for="switcher_submit">
-            <input type="submit" name="switcher_submit" value="Switch" id="switcher_submit">
+            <input type="submit" name="switcher_submit" value="Switch" id="switcher_submit" class="btn btn-primary collapsed">
           </label>
           </form>
         </div>
@@ -214,7 +214,7 @@ $(function(){
   <div class="col-lg-12">
     <div class="panel panel-default">
       <div class="panel-body">
-        <h2>
+        <h2 style="background-color:#cacaca;padding:4px;">
           {{term|title}}
           {{year}}
         </h2>
@@ -271,7 +271,7 @@ $(function(){
   <div class="col-lg-12">
     <div class="panel panel-default">
       <div class="panel-body">
-        <h2>
+        <h2 style="background-color:#cacaca;padding:4px;">
           {% if department %}
             {{department}}
           {% else %}

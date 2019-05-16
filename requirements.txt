@@ -8,3 +8,4 @@ informixdb==2.5
 requests==2.21.0
 openpyxl==2.6.1
 python-magic==0.4.15
+django-loginas==0.3.6
