@@ -4,7 +4,6 @@ DSPACEURL="https://dspace.carthage.edu/rest"
 EMAIL="larry@carthage.edu"
 PASSWORD=""
 TYPE="json"
-VERB="POST"
 ACTION="login"
 
 URL="${DSPACEURL}/${ACTION}"
@@ -21,4 +20,3 @@ curl -4 \
   -H "Content-Type: application/${TYPE}" \
   --data "${RQST}" \
   "${URL}"
-
