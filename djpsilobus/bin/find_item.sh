@@ -1,17 +1,19 @@
 #!/bin/bash
 
+#"value": "2019_RC_CSC_1820_02_Kivolowitz_Perry_syllabus.pdf?",
 RQST='
 {
     "key": "dc.title.alternative",
-    "value": "2016_RA_SPN_4200_01_Rodriguez_Lorenzo.pdf","language": "en"
+    "value": "2017_RC_CSC_1110_02_Wheeler_Erlan_syllabus.pdf",
+    "language": "en"
 }
 '
 
-DSPACEURL="https://dspace.carthage.edu/rest"
+#DSPACEURL="https://dspace.carthage.edu/rest"
+DSPACEURL="https://carthage.upgrade.dspace-express.com/rest"
 TOKEN=""
 VERB="POST"
 REQUEST_TYPE="json"
-# mathematics jterm 2016 collection
 ACTION="items/find-by-metadata-field"
 EARL="${DSPACEURL}/${ACTION}"
 echo ${EARL}
