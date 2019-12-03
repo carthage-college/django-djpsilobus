@@ -38,7 +38,7 @@ import tarfile
 
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
-YEARS =  [(x, x) for x in reversed(xrange(2016,datetime.date.today().year +1))]
+YEARS =  [(x, x) for x in reversed(xrange(2016,datetime.date.today().year + 2))]
 
 
 def get_session_term():

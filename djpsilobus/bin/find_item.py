@@ -2,12 +2,6 @@
 import os, sys
 
 # env
-sys.path.append('/usr/lib/python2.7/dist-packages/')
-sys.path.append('/usr/lib/python2.7/')
-sys.path.append('/usr/local/lib/python2.7/dist-packages/')
-sys.path.append('/data2/django_1.9/')
-sys.path.append('/data2/django_projects/')
-sys.path.append('/data2/django_third/')
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "djpsilobus.settings")
 
 from django.conf import settings
@@ -18,8 +12,8 @@ import argparse
 
 # set up command-line options
 desc = """
-Accepts as input a file name to be searched in the
-dc.title.alternative metadata field
+    Accepts as input a file name to be searched in the
+    dc.title.alternative metadata field
 """
 
 parser = argparse.ArgumentParser(description=desc)
@@ -30,6 +24,7 @@ parser.add_argument(
     help="The name of the file for which to search",
     dest="phile"
 )
+
 
 def main():
     """
@@ -48,9 +43,6 @@ def main():
     '''
     print jason
 
-######################
-# shell command line
-######################
 
 if __name__ == "__main__":
     args = parser.parse_args()
