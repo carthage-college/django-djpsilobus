@@ -9,80 +9,79 @@ import requests
 Suppress InsecureRequestWarning
 https://stackoverflow.com/questions/27981545/suppress-insecurerequestwarning-unverified-https-request-is-being-made-in-pytho
 """
-#from requests.packages.urllib3.exceptions import InsecureRequestWarning
-#requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
+COOKIE_CACHE_KEY = settings.DSPACE_COOKIE_CACHE_KEY
 REST_URL = settings.DSPACE_REST_URL
+HEADERS = {
+    'content-type': 'application/json',
+    'Accept': 'application/json'
+}
 
 
-def _get_token():
-    # obtain our token from DSpace server
-    login_url = "{}/login".format(REST_URL)
+def _get_cookie():
+
+    # obtain our cookie from DSpace server
+    login_url = '{}/login'.format(REST_URL)
     login_dict = {
-        "email":"{}".format(settings.DSPACE_EMAIL),
-        "password":"{}".format(settings.DSPACE_PASSWORD)
+        'email':'{}'.format(settings.DSPACE_EMAIL),
+        'password':'{}'.format(settings.DSPACE_PASSWORD)
     }
-    token = requests.post(
-        login_url, data=json.dumps(login_dict),
-        headers={'content-type': 'application/json'},
-        verify=False
+    response = requests.get(
+        url=login_url, params=login_dict, headers=HEADERS, verify=False
     )
-    return token._content
+    dic = response.cookies.get_dict()
+    return dic['JSESSIONID']
+
+def _get_status(headers, cookies):
+    # check cookie status
+    status = False
+    response = requests.get(
+        '{}/status'.format(REST_URL), cookies=cookies, headers=headers, verify=False
+    )
+    jason = json.loads(response.content)
+    if jason['authenticated']:
+        status = True
+    return status
+
 
 class Manager(object):
 
     def __init__(self):
 
-        token = cache.get("DSPACE_API_TOKEN")
-        if not token:
-            # obtain our token from DSpace server
-            login_url = "{}/login".format(REST_URL)
-            login_dict = {
-                "email":"{}".format(settings.DSPACE_EMAIL),
-                "password":"{}".format(settings.DSPACE_PASSWORD)
-            }
-            token = requests.post(
-                login_url, data=json.dumps(login_dict),
-                headers={'content-type': 'application/json'},
-                verify=False
-            )
-            token = token._content
-            token = _get_token()
-            cache.set("DSPACE_API_TOKEN", token, None)
+        self.headers = HEADERS
+        cookie = cache.get(COOKIE_CACHE_KEY)
+        if not cookie:
+            cookie = _get_cookie()
+            cache.set(COOKIE_CACHE_KEY, cookie, None)
+            cookies = {'JSESSIONID': cookie}
         else:
-            # check token status
-            headers = {
-                'content-type': 'application/json',
-                'Accept': 'application/json',
-                'rest-dspace-token': token
-            }
-            response = requests.get(
-                '{}/status'.format(REST_URL),
-                headers=headers, verify=False
-            )
-            r = json.loads( response._content )
+            cookies = {'JSESSIONID': cookie}
+            if not _get_status(self.headers, cookies):
+                cookie = _get_cookie()
+                cache.set(COOKIE_CACHE_KEY, cookie, None)
+                cookies = {'JSESSIONID': cookie}
 
-            if r["authenticated"] != "true":
-                token = _get_token()
-        self.headers = {
-            "Content-Type": "application/json",
-            "rest-dspace-token": "{}".format(token),
-            "accept": "application/json"
-        }
+        self.cookies = cookies
+
+    def status(self):
+        return _get_status(self.headers, self.cookies)
+
+    def crumble(self):
+        cache.delete(COOKIE_CACHE_KEY)
 
     def request(self, uri, action, req_dict=None, phile=None, headers=None):
 
         if not headers:
             headers = self.headers
 
-        earl = "{}/{}".format(REST_URL, uri)
-        if action == "post":
+        earl = '{}/{}'.format(REST_URL, uri)
+        if action == 'post':
             action = requests.post
-        elif action == "get":
+        elif action == 'get':
             action = requests.get
-        elif action == "delete":
+        elif action == 'delete':
             action = requests.delete
         else:
             return None
@@ -95,11 +94,11 @@ class Manager(object):
             data = req_dict
 
         if phile:
-            earl += "?name={}".format(data)
-            #headers["Content-Type"] = "application/x-www-form-urlencoded"
-            headers["Content-Type"] = "multipart/form-data"
-            #headers["accept"] = "application/pdf"
-            #del headers["accept"]
+            earl += '?name={}'.format(data)
+            #headers['Content-Type'] = 'application/x-www-form-urlencoded'
+            headers['Content-Type'] = 'multipart/form-data'
+            #headers['accept'] = 'application/pdf'
+            #del headers['accept']
 
             with open(phile,'rb') as payload:
                 files={phile: payload}
@@ -110,21 +109,26 @@ class Manager(object):
                 #}
                 #data = {'name': phile}
                 response = action(
-                    earl, files=files, headers=headers, verify=False
+                    earl, files=files, headers=headers, cookies=self.cookies,
+                    verify=False
                 )
-        elif action == "delete":
+        elif action == 'delete':
             response = action(
-                earl, headers=headers, verify=False
+                earl, headers=headers, cookies=self.cookies, verify=False
+            )
+        elif data:
+            response = action(
+                earl, data=data, headers=headers, cookies=self.cookies, verify=False
             )
         else:
             response = action(
-                earl, data=data, headers=headers, verify=False
+                earl, headers=headers, cookies=self.cookies, verify=False
             )
 
         try:
-            response = json.loads(response._content)
+            response = json.loads(response.content)
         except:
-            response = response._content
+            response = response.content
 
         return response
 
@@ -137,13 +141,13 @@ class Search(Manager):
         """
 
         req_dict = {
-            "key": "{}".format(metatag),
-            "value": "{}".format(phile),
-            "language": "en_US"
+            'key': '{}'.format(metatag),
+            'value': '{}'.format(phile),
+            'language': 'en_US'
         }
 
         return self.request(
-            "items/find-by-metadata-field", "post", req_dict
+            'items/find-by-metadata-field', 'post', req_dict
         )
 
     def collection(self, name=None):
@@ -152,5 +156,5 @@ class Search(Manager):
         """
 
         return self.request(
-            name, "collections/find-collection", "post"
+            name, 'collections/find-collection', 'post'
         )

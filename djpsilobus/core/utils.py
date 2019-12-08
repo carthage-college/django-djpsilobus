@@ -26,18 +26,33 @@ def find_file(phile):
     """
 
     req_dict = {
-        "key": "dc.title.alternative",
-        "value": "{}".format(phile),
-        "language": "en_US"
+        'key': 'dc.title.alternative',
+        'value': '{}'.format(phile),
+        'language': 'en_US'
     }
 
     manager = Manager()
 
     jason = manager.request(
-        "items/find-by-metadata-field", "post", req_dict
+        'items/find-by-metadata-field', 'post', req_dict
     )
 
     return jason
+
+
+def get_items(collection_id):
+    """
+    accepts a collection UUID and returns all items in that collection
+    """
+    manager = Manager()
+
+    jason = manager.request(
+        'collections/{}/items'.format(collection_id), 'get'
+    )
+
+    return jason
+
+
 
 def create_item(item):
     """
@@ -50,48 +65,46 @@ def create_item(item):
     # create database session
     session = get_session(EARL)
 
-    prefix = "UG"
-    if item["term"][0] == "G":
-        prefix = "GR"
-    cat = "{}{}".format(prefix, item["year"][-2:])
+    prefix = 'UG'
+    if item['term'][0] == 'G':
+        prefix = 'GR'
+    print(item)
+    print(prefix)
+    print(item['year'][-2:])
+    cat = '{}{}'.format(prefix, item['year'][-2:])
     c = session.query(AbstractRecord).\
-        filter_by(crs_no = item["course_number"]).\
+        filter_by(crs_no = item['course_number']).\
         filter_by(cat = cat).first()
     if c and c.abstr:
         abstr = c.abstr.split('\n')
         if len(abstr) > 1:
             try:
-                abstr = abstr[2].decode("cp1252", "ignore")
+                abstr = abstr[2].decode('cp1252', 'ignore')
             except:
-                abstr = c.abstr.decode("cp1252", "ignore")
+                abstr = c.abstr.decode('cp1252', 'ignore')
         else:
-            abstr = c.abstr.decode("cp1252", "ignore")
+            abstr = c.abstr.decode('cp1252', 'ignore')
     else:
-        abstr = ""
+        abstr = ''
 
-    dept = item["course_number"].split(" ")[0]
+    dept = item['course_number'].split(' ')[0]
     collection_id = DEPARTMENTS[dept]
     # author
-    data['metadata'][0]['value'] = item["fullname"]
+    data['metadata'][0]['value'] = item['fullname']
     # description
     data['metadata'][1]['value'] = abstr
     # title
-    data['metadata'][2]['value'] = item["title"]
+    data['metadata'][2]['value'] = item['title']
     # title alternative
-    data['metadata'][3]['value'] = item["title_alt"]
+    data['metadata'][3]['value'] = item['title_alt']
     # subject: year
-    data['metadata'][4]['value'] = item["year"]
+    data['metadata'][4]['value'] = item['year']
     # subject: term
-    data['metadata'][5]['value'] = TERM_LIST[item["term"]]
-    uri = "collections/{}/items".format(collection_id)
-
-    #print "data = {}".format(data)
-    #print "uri = {}".format(uri)
-
+    data['metadata'][5]['value'] = TERM_LIST[item['term']]
+    uri = 'collections/{}/items'.format(collection_id)
+    print(uri)
     manager = Manager()
-    new_item = manager.request(uri, "post", data)
-    #print "new_item={}".format(new_item)
-    #print "id={}".format(new_item['id'])
+    new_item = manager.request(uri, 'post', data)
     return new_item
 
 
@@ -104,7 +117,7 @@ def syllabus_name(course):
     lastname = re.sub('[^0-9a-zA-Z]+', '_', course.lastname)
     firstname = re.sub('[^0-9a-zA-Z]+', '_', course.firstname)
     return u'{}_{}_{}_{}_{}_{}_syllabus'.format(
-        course.yr, course.sess, course.crs_no.replace(" ","_"),
+        course.yr, course.sess, course.crs_no.replace(' ','_'),
         course.sec_no, lastname, firstname
     )
 
@@ -129,9 +142,9 @@ def sheet(ws, division, department, courses):
             division, department,phile
         )
         if os.path.isfile(path):
-            syllabus="Yes"
+            syllabus='Yes'
         else:
-            syllabus="No"
+            syllabus='No'
 
         section.append(syllabus)
         ws.append(section)

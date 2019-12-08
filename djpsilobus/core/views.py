@@ -36,6 +36,9 @@ import json
 import magic
 import tarfile
 
+import logging
+logger = logging.getLogger(__name__)
+
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
 YEARS =  [(x, x) for x in reversed(xrange(2016,datetime.date.today().year + 2))]
@@ -243,7 +246,7 @@ def home(request, dept=None, term=None, YEAR=None):
                         }
                         new_item = create_item(item)
                         # send file to DSpace
-                        uri='items/{}/bitstreams/'.format(new_item['id'])
+                        uri='items/{}/bitstreams/'.format(new_item['uuid'])
                         response = manager.request(
                             uri, 'post', phile, phile=upload
                         )
