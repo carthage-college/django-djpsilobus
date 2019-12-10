@@ -7,86 +7,86 @@ DIVISIONS = {
 }
 # Departments
 DEPARTMENTS = {
-    'ACC':'4ee99187-69fd-4661-ac67-4ed5f0b20ec5',  #Accounting
-    'ART':'78560a32-ddba-4e9b-895e-f4b31f67bea1',  #Art
-    'ARH':'dbecd76d-15c8-4e0c-a5d9-bb1e478ed237',  #Art History
-    'ASN':'9d3d3166-1c62-4178-92e4-53cb048080b8',  #Asian Studies Program
-    '_ASN':'9d3d3166-1c62-4178-92e4-53cb048080b8', #Asian Studies Program
-    'ATH':'5c5816cd-ba18-4b65-891d-1c6dbb354b06',  #Athletic Training
-    '_ATH':'5c5816cd-ba18-4b65-891d-1c6dbb354b06', #Athletic Training
-    'BIO':'6b6c7ef2-32a0-46c9-9f80-106ca2f4dded',  #Biology
-    'BUS':'4d991088-5068-4f5a-9a97-297e33e0132a',  #Business Administration
-    'CHM':'84a74e11-32d7-4687-a061-63ef6b51119a',  #Chemistry
-    'CHN':'181cbf43-cd60-4b2e-bdee-41a67dd7f085',  #Chinese
-    'CLS':'55092a18-1417-4a1c-8815-827c34c2faf0',  #Classics
-    'CDM':'b335e999-e6a2-4973-a11a-daaba03d048d',  #Communication Digital Media
-    'CSC':'2fb64885-5013-4c69-8536-a4a3c4fb1623',  #Computer Science
+    'ACC':'8cc10fa7-35b6-48b5-8855-e913980bc384',  #Accounting
+    'ART':'b405e986-37f6-42cc-98de-8a3ee616491c',  #Art
+    'ARH':'50eee7a8-0a1b-425f-89c1-63b0d2ff7d7b',  #Art History
+    'ASN':'a522e68e-9c37-443c-ac17-eeb1a36653fd',  #Asian Studies Program
+    '_ASN':'a522e68e-9c37-443c-ac17-eeb1a36653fd', #Asian Studies Program
+    'ATH':'c2b83624-122c-42b6-92eb-cf876c95ca7f',  #Athletic Training
+    '_ATH':'c2b83624-122c-42b6-92eb-cf876c95ca7f', #Athletic Training
+    'BIO':'3b62cbb5-a0b7-4d55-a0ae-f48b480b8eca',  #Biology
+    'BUS':'3b00e318-8be7-4f1a-8a82-bc3e923ed682',  #Business Administration
+    'CHM':'918a6978-26a4-4b27-b717-4f146b2da173',  #Chemistry
+    'CHN':'f2701464-3fcd-4110-8efb-70932bae8104',  #Chinese
+    'CLS':'fe40404d-7dc9-4199-8b65-ec3d96dcd8e6',  #Classics
+    'CDM':'069a94b7-1d14-458a-8167-34e9e8219a09',  #Communication Digital Media
+    'CSC':'50b4d81f-8546-4188-993d-2ff580b65c3a',  #Computer Science
     'CONF':'Conference',                           #Conference
     'ADUL':'Continuing Studies',                   #Continuing Studies
-    'CRJ':'b72dd113-f171-4a96-bb73-74f470a012ad',  #Criminal Justice Program
-    '_CRJ':'b72dd113-f171-4a96-bb73-74f470a012ad', #Criminal Justice Program
+    'CRJ':'d9d0f474-c5b3-44cd-a61b-98e8b4bb909b',  #Criminal Justice Program
+    '_CRJ':'d9d0f474-c5b3-44cd-a61b-98e8b4bb909b', #Criminal Justice Program
     'DIS':'Discovery Program',                     #Discovery Program
     '_DIS':'Discovery Program',                    #Discovery Program
     'DNC':'6d82a5e7-deab-4929-9502-14b3898f5b61',  #Dance = Theatre
-    'ECN':'bb155851-0e07-47be-844e-58edaa3a1606',  #Economics
-    'EDU':'6c4c0de7-ab32-4484-a4d7-23c1e2ed3a57',  #Education
-    'ENG':'6f3d36b0-41ee-479f-adc3-ac479e88b653',  #English
+    'ECN':'f17a0469-7407-4871-8e42-88095fe666d8',  #Economics
+    'EDU':'17b90ea0-efaa-4eac-b37c-0bb30e4a5267',  #Education
+    'ENG':'26028861-1bbd-4508-b87b-e2644db6c5ff',  #English
     'ENRC':'Enrichment',                           #Enrichment
-    'ENV':'8dd1a900-a896-40a8-927f-b716f317b685',  #Environmental Science
-    '_ENV':'8dd1a900-a896-40a8-927f-b716f317b685', #Environmental Science
-    'EXS':'1b7dd4ef-38fc-4cc1-bd7e-d4cfa3f44f15',  #Exercise and Sport Science
+    'ENV':'b49790d1-a0e3-4fe2-86da-6a525ab84207',  #Environmental Science
+    '_ENV':'b49790d1-a0e3-4fe2-86da-6a525ab84207', #Environmental Science
+    'EXS':'17c0b1cb-3a61-42a3-a80c-7e4dfe61d44b',  #Exercise and Sport Science
     'FAC':'Finance and Accounting',                #Sub-Community
-    'FAR':'78560a32-ddba-4e9b-895e-f4b31f67bea1',  #Fine Arts
-    'FIN':'46f1cd49-4df1-4e57-9cf0-c87f91f0cb7e',  #Finance
-    'FRN':'8b10147a-9bdd-4a6c-b07f-e7d5ae775b63',  #French
-    'GNR':'943f75fc-fa42-4034-80c6-cb7a7f573b3c',  #General
-    '_GNR':'943f75fc-fa42-4034-80c6-cb7a7f573b3c', #General
-    'GEO':'0e9db8b4-27d1-4489-84a2-deb5ad1855a7',  #Geography and Earth Science
-    'GRM':'4f1718e4-bae0-4d16-af98-c8572da75559',  #German
-    'GBL':'15824d2b-5399-40c0-9e90-328f7c864fe9',  #Global Heritage Program
-    '_GBL':'15824d2b-5399-40c0-9e90-328f7c864fe9', #Global Heritage Program
-    'GRK':'2f9e0e01-10a8-4269-aea9-2b3a7be7287a',  #Greek
-    'GFW':'cf2eee4f-9e64-443d-913a-df02293175f9',  #Great Ideas Program
-    '_GFW':'cf2eee4f-9e64-443d-913a-df02293175f9', #Great Ideas Program
-    'HIS':'5759ab24-9aae-4b6f-9dea-13db516c526d',  #History
-    'HON':'e9289c4b-333f-4291-bcb9-18ca713d0bd3',  #Honors Program
-    '_HON':'e9289c4b-333f-4291-bcb9-18ca713d0bd3', #Honors Program
-    'IPE':'7e15396c-c854-4515-b10c-0fa5bb5276e8',  #International Political Economy
-    '_IPE':'7e15396c-c854-4515-b10c-0fa5bb5276e8', #International Political Economy
-    'JPN':'f9614811-44f5-4565-8871-d925fb6336f0',  #Japanese
-    'LTN':'76090dea-c341-45c3-81b7-caed1b660fca',  #Latin
-    'MGT':'ee79484b-4880-4afe-8058-54020bbde536',  #Management
-    'MKT':'c1a29123-136d-4d38-b42a-0483aed883bc',  #Marketing
+    'FAR':'b8fc6ec1-3269-4ab2-bf36-dcdf8f1d6b1c',  #Fine Arts
+    'FIN':'dbb13442-673d-46b3-8d41-5ac2684607a8',  #Finance
+    'FRN':'e377322f-7764-480b-bb60-1a4433334ee6',  #French
+    'GNR':'b5efeda1-42be-4445-a012-b017d6f01cf7',  #General
+    '_GNR':'b5efeda1-42be-4445-a012-b017d6f01cf7', #General
+    'GEO':'6a88c727-8955-4872-aa26-82667c115878',  #Geography and Earth Science
+    'GRM':'5c2fbfeb-328c-46d4-be6e-a95d970239f4',  #German
+    'GBL':'a97cfedb-8ab6-4f9c-aabb-1a1672cb51ac',  #Global Heritage Program
+    '_GBL':'a97cfedb-8ab6-4f9c-aabb-1a1672cb51ac', #Global Heritage Program
+    'GRK':'d9601907-466d-4a58-9be2-c4d2d49184eb',  #Greek
+    'GFW':'a1cc2e00-12d9-47f4-9c31-88374e94a050',  #Great Ideas Program
+    '_GFW':'a1cc2e00-12d9-47f4-9c31-88374e94a050', #Great Ideas Program
+    'HIS':'21b3c2fc-1588-4051-82e1-614cb17589ba',  #History
+    'HON':'a61dfb67-a8ec-4e4e-b7b7-f694ede5dec7',  #Honors Program
+    '_HON':'a61dfb67-a8ec-4e4e-b7b7-f694ede5dec7', #Honors Program
+    'IPE':'6f0f5e5b-555b-40c3-9d62-01dbf1e5084a',  #International Political Economy
+    '_IPE':'6f0f5e5b-555b-40c3-9d62-01dbf1e5084a', #International Political Economy
+    'JPN':'29b88efe-832c-4436-b987-29de099ca154',  #Japanese
+    'LTN':'00bd264c-2ecc-467e-98b6-dcb02e9f3642',  #Latin
+    'MGT':'c75726ee-14c7-420b-bed5-10a43e28cd5c',  #Management
+    'MKT':'0f7b06c2-d33f-48e2-8134-f0bae00fa22a',  #Marketing
     'MMK':'Management and Marketing',              #Sub-Community
-    'MTH':'a8a236c6-38a1-4469-941c-039020470f6c',  #Mathematics
-    'MLA':'38a2a20a-e516-48b3-bad0-4a10fce6d031',  #Modern Languages
-    'MUS':'38ee7433-6c54-47fa-b784-a2bf4f10065f',  #Music
-    'NAT':'943f75fc-fa42-4034-80c6-cb7a7f573b3c',  #General
-    'NEU':'b321d27b-d644-4d5b-ac97-a5613e8cca58',  #Neuroscience Program
-    '_NEU':'b321d27b-d644-4d5b-ac97-a5613e8cca58', #Neuroscience Program
-    'NSG':'8c45d947-eab0-4846-96f9-8571a04fb73e',  #Nursing
-    'NUR':'8c45d947-eab0-4846-96f9-8571a04fb73e',  #Nursing
-    'PHL':'2920c1ac-27a6-41b9-93ab-66675d95edcd',  #Philosophy
-    'PEH':'df65225f-c2ad-4925-a617-6477ff368078',  #Physical Education/Health Program
-    '_PEH':'df65225f-c2ad-4925-a617-6477ff368078', #Physical Education/Health Program
+    'MTH':'a3f8696c-46a6-46b6-b20a-2a59feec7fde',  #Mathematics
+    'MLA':'82291575-11f4-4942-9a88-2740e627d6e7',  #Modern Languages
+    'MUS':'05c999b6-5c68-48fe-9d86-c57b32c1b4e9',  #Music
+    'NAT':'943f75fc-fa42-4034-80c6-cb7a7f573b3c',  #General ?
+    'NEU':'aec2533e-233c-4105-bc58-0b4f651d1db1',  #Neuroscience Program
+    '_NEU':'aec2533e-233c-4105-bc58-0b4f651d1db1', #Neuroscience Program
+    'NSG':'03ffb510-6249-447c-8301-dfd3c47b43ca',  #Nursing
+    'NUR':'03ffb510-6249-447c-8301-dfd3c47b43ca',  #Nursing
+    'PHL':'d82b9819-13a0-4336-b9ef-2155004e334b',  #Philosophy
+    'PEH':'51486552-ecdf-47ba-aceb-d5797048e63f',  #Physical Education/Health Program
+    '_PEH':'51486552-ecdf-47ba-aceb-d5797048e63f', #Physical Education/Health Program
     'PARA':'Paralegal Program',                    #Paralegal
-    'PHY':'7cd17d95-e624-496b-ba73-4a062ec39ae7',  #Physics/Astronomy
-    'POL':'e8e23750-95ff-4b2c-9d91-4416f16f392b',  #Political Science
-    'PYC':'99e8a5b0-cbbc-430f-ae47-db27553a417e',  #Psychological Science
-    'REL':'60ea0a65-cf82-4824-970b-ccd686e19619',  #Religion
+    'PHY':'f9187381-7681-42e4-b6fe-787a4a421942',  #Physics/Astronomy
+    'POL':'9c67a056-2d6e-4d4e-9401-28c712070646',  #Political Science
+    'PYC':'0cf20934-7eef-484e-ba99-9a9697688e00',  #Psychological Science
+    'REL':'2fa71e84-901f-488e-8cc5-ef5b3ac0ad59',  #Religion
     'ESN':'Science Works Program',                 #Science Works
     '_ESN':'Science Works Program',                #Science Works
-    'SSC':'23ed135c-87d7-4e78-95ce-5357e79f6723',  #Social Science Program
-    '_SSC':'23ed135c-87d7-4e78-95ce-5357e79f6723', #Social Science Program
-    'SWK':'10a225f1-60b6-4628-bb70-3a6e8e3354fc',  #Social Work
-    'SOC':'0da7473e-d575-4100-9ba0-3b6bbbe4e3be',  #Sociology
-    'SPN':'a78b5741-1ccf-492f-93f6-30c688743ac7',  #Spanish
-    'THR':'6d82a5e7-deab-4929-9502-14b3898f5b61',  #Theatre
-    'COR':'bbaa5853-943e-4dc3-8e4e-769279221b9e',  #Western Heritage Program
-    'WHE':'bbaa5853-943e-4dc3-8e4e-769279221b9e',  #Western Heritage Program
-    '_WHE':'bbaa5853-943e-4dc3-8e4e-769279221b9e', #Western Heritage Program
-    'WMG':'7adfe59e-f361-4276-a171-3f2bc46663c4',  #Women and Gender Studies
-    '_WMG':'7adfe59e-f361-4276-a171-3f2bc46663c4'  #Women and Gender Studies
+    'SSC':'5bc1aa3d-3e90-40d4-9297-64262acf2dd7',  #Social Science Program
+    '_SSC':'5bc1aa3d-3e90-40d4-9297-64262acf2dd7', #Social Science Program
+    'SWK':'ce018c9c-a31b-4482-9d51-c9f23f064b21',  #Social Work
+    'SOC':'4535df0e-f074-4dd0-81d9-d9e8825446b4',  #Sociology
+    'SPN':'fa5f7801-1847-4765-ba23-39ab59133777',  #Spanish
+    'THR':'b8fc6ec1-3269-4ab2-bf36-dcdf8f1d6b1c',  #Theatre
+    'COR':'88cc91a4-8004-4513-8446-7b12ee1becde',  #Western Heritage Program
+    'WHE':'88cc91a4-8004-4513-8446-7b12ee1becde',  #Western Heritage Program
+    '_WHE':'88cc91a4-8004-4513-8446-7b12ee1becde', #Western Heritage Program
+    'WMG':'d0492ec0-13ab-417e-9605-a2ded69200cc',  #Women and Gender Studies
+    '_WMG':'d0492ec0-13ab-417e-9605-a2ded69200cc'  #Women and Gender Studies
 }
 # each name maps to a value that should be used as the Department code
 # e.g. FRN (French) is an MLA (Modern Languages) Department
