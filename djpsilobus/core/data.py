@@ -36,7 +36,7 @@ DEPARTMENTS = {
     '_ENV':'b49790d1-a0e3-4fe2-86da-6a525ab84207', #Environmental Science
     'EXS':'17c0b1cb-3a61-42a3-a80c-7e4dfe61d44b',  #Exercise and Sport Science
     'FAC':'Finance and Accounting',                #Sub-Community
-    'FAR':'b8fc6ec1-3269-4ab2-bf36-dcdf8f1d6b1c',  #Fine Arts
+    'FAR':'b405e986-37f6-42cc-98de-8a3ee616491c',  #Fine Arts
     'FIN':'dbb13442-673d-46b3-8d41-5ac2684607a8',  #Finance
     'FRN':'e377322f-7764-480b-bb60-1a4433334ee6',  #French
     'GNR':'b5efeda1-42be-4445-a012-b017d6f01cf7',  #General
@@ -61,7 +61,7 @@ DEPARTMENTS = {
     'MTH':'a3f8696c-46a6-46b6-b20a-2a59feec7fde',  #Mathematics
     'MLA':'82291575-11f4-4942-9a88-2740e627d6e7',  #Modern Languages
     'MUS':'05c999b6-5c68-48fe-9d86-c57b32c1b4e9',  #Music
-    'NAT':'943f75fc-fa42-4034-80c6-cb7a7f573b3c',  #General ?
+    'NAT':'b5efeda1-42be-4445-a012-b017d6f01cf7',  #General
     'NEU':'aec2533e-233c-4105-bc58-0b4f651d1db1',  #Neuroscience Program
     '_NEU':'aec2533e-233c-4105-bc58-0b4f651d1db1', #Neuroscience Program
     'NSG':'03ffb510-6249-447c-8301-dfd3c47b43ca',  #Nursing
