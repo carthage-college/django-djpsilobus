@@ -1,70 +1,70 @@
+# -*- coding: utf-8 -*-
+
+"""Views for all operations."""
+
+import datetime
+import os
+import tarfile
+from collections import OrderedDict
+
+import magic
 from django.conf import settings
 from django.contrib import messages
 from django.core.cache import cache
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.http import Http404
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.core.urlresolvers import reverse_lazy
+from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
-
+from djimix.core.database import get_connection
+from djimix.core.database import xsql
+from djimix.decorators.auth import portal_auth_required
+from djimix.people.departments import academic_department
+from djimix.people.departments import chair_departments
+from djimix.people.departments import department_faculty
+from djimix.sql.departments import ACADEMIC_DEPARTMENTS
 from djpsilobus.core.data import DEPARTMENT_EXCEPTIONS
-from djpsilobus.core.dspace import Manager, Search
-from djpsilobus.core.utils import sheet, syllabus_name
+from djpsilobus.core.dspace import Manager
+from djpsilobus.core.dspace import Search
 from djpsilobus.core.utils import create_item
-
-from djzbar.decorators.auth import portal_auth_required
-from djzbar.utils.informix import do_sql as do_esql
-from djzbar.utils.hr import chair_departments, academic_department
-from djzbar.utils.hr import department_faculty
-from djzbar.utils.academics import sections
-from djzbar.utils.academics import division_departments
-from djzbar.core.sql import ACADEMIC_DEPARTMENTS
-from djzbar.constants import TERM_LIST
-
+from djpsilobus.core.utils import division_departments
+from djpsilobus.core.utils import sections
+from djpsilobus.core.utils import sheet
+from djpsilobus.core.utils import syllabus_name
 from djtools.fields.helpers import handle_uploaded_file
-from djtools.fields import TODAY
-
-from os.path import join
-from collections import OrderedDict
-from openpyxl import Workbook
 from openpyxl import load_workbook
 from openpyxl.writer.excel import save_virtual_workbook
 
-import re
-import os
-import datetime
-import json
-import magic
-import tarfile
 
-import logging
-logger = logging.getLogger(__name__)
-
+TODAY = settings.TODAY
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
-YEARS =  [(x, x) for x in reversed(xrange(2016,datetime.date.today().year + 2))]
+
+"""
+Key for Term codes.
+AA  Fall I  UNDG
+AB  Fall II     UNDG
+AG  Winter  UNDG
+AK  Spring I    UNDG
+AM  Spring II   UNDG
+AS  Summer I    UNDG
+AT  Summer II   UNDG
+
+GA  Fall Graduate   GRAD
+GB  Winter Graduate     GRAD
+GC  Spring Graduate     GRAD
+GE  Summer Graduate     GRAD
+
+RA  Fall    UNDG
+RB  J-Term  UNDG
+RC  Spring  UNDG
+RE  Summer  UNDG
+"""
 
 
 def get_session_term():
-    '''
-    AA  Fall I  UNDG
-    AB  Fall II     UNDG
-    AG  Winter  UNDG
-    AK  Spring I    UNDG
-    AM  Spring II   UNDG
-    AS  Summer I    UNDG
-    AT  Summer II   UNDG
-
-    GA  Fall Graduate   GRAD
-    GB  Winter Graduate     GRAD
-    GC  Spring Graduate     GRAD
-    GE  Summer Graduate     GRAD
-
-    RA  Fall    UNDG
-    RB  J-Term  UNDG
-    RC  Spring  UNDG
-    RE  Summer  UNDG
-    '''
-
+    """Obtain the session and term based on date."""
     now = datetime.datetime.now()
     if now.month >= 1 and now.month <= 5:
         sess = settings.SPRING_TERMS
@@ -76,28 +76,29 @@ def get_session_term():
         sess = settings.FALL_TERMS
         term = 'fall'
 
-    return {'term':term, 'sess':sess}
+    return {'term': term, 'sess': sess}
 
 
 @portal_auth_required(
-    session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied')
+    session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied'),
 )
-def home(request, dept=None, term=None, YEAR=None):
+def home(request, dept=None, term=None, year=None):
+    """Home page view after auth."""
     # change year/sess
-    if not YEAR:
-        YEAR = TODAY.year
+    if not year:
+        year = TODAY.year
     if request.GET.get('year'):
-        YEAR = request.GET.get('year')
+        year = request.GET.get('year')
     if not term:
         term = request.GET.get('term')
     if term == 'spring':
-        SESS = settings.SPRING_TERMS
+        session = settings.SPRING_TERMS
     elif term == 'fall':
-        SESS = settings.FALL_TERMS
+        session = settings.FALL_TERMS
     elif term == 'summer':
-        SESS = settings.SUMMER_TERMS
+        session = settings.SUMMER_TERMS
     else:
-        SESS = get_session_term()['sess']
+        session = get_session_term()['sess']
     if not term:
         term = get_session_term()['term']
     # current user
@@ -113,48 +114,53 @@ def home(request, dept=None, term=None, YEAR=None):
     division_code = None
     # faculty ID, name, courses
     fid = None
-    pfid = None # post faculty ID
+    pfid = None  # post faculty ID
     faculty_name = None
     courses = None
     # fetch our departments
     if uid in settings.ADMINISTRATORS:
         admin = True
 
-        sql = '{} ORDER BY dept_table.txt'.format(ACADEMIC_DEPARTMENTS)
-        objs = do_esql(sql)
+        sql = '{0} ORDER BY dept_table.txt'.format(ACADEMIC_DEPARTMENTS)
+        connection = get_connection()
+        with connection:
+            rows = xsql(sql, connection).fetchall()
+
         depts = OrderedDict()
-        for o in objs:
-            depts[o.dept_code] = {
-                'dept_name':o.dept_name, 'dept_code':o.dept_code,
-                'div_name': o.div_name, 'div_code': o.div_code
+        for row in rows:
+            depts[row.dept_code] = {
+                'dept_name': row.dept_name,
+                'dept_code': row.dept_code,
+                'div_name': row.div_name,
+                'div_code': row.div_code,
             }
-        depts = {'depts':depts}
+        depts = {'depts': depts}
     else:
         depts, dean_chair, division_name, division_code = chair_departments(uid)
     dept_list = []
     if admin or depts.get('depts'):
-        for c,d in depts['depts'].iteritems():
-            faculty = department_faculty(c, YEAR)
+        for dcode, deptartment in depts['depts'].items():
+            faculty = department_faculty(dcode, year)
             dept_list.append({
-                'dept_name':d['dept_name'],
-                'dept_code':d['dept_code'],
-                'div_name':d['div_name'],
-                'div_code':d['div_code'],
-                'faculty':faculty
+                'dept_name': deptartment['dept_name'],
+                'dept_code': deptartment['dept_code'],
+                'div_name': deptartment['div_name'],
+                'div_code': deptartment['div_code'],
+                'faculty': faculty,
             })
 
     # obtain the courses for department or faculty
     if dept:
         # all faculty courses for department
-        courses = sections(code=dept,year=YEAR,sess=SESS)
+        courses = sections(code=dept, year=year, sess=session)
         dept = academic_department(dept)
         if dept:
             dept = dept[0]
     elif request.method == 'POST' and not request.FILES:
         substr = 'dept_faculty'
-        for key,val in request.POST.iteritems():
-            if substr in key and val:
-                pfid = int(val)
+        for key, post_value in request.POST.items():
+            if substr in key and post_value:
+                pfid = int(post_value)
         if pfid:
             fid = pfid
 
@@ -164,36 +170,28 @@ def home(request, dept=None, term=None, YEAR=None):
         fid = uid
     # faculty courses
     if not courses:
-        courses = sections(year=YEAR,sess=SESS,fid=fid)
+        courses = sections(year=year, sess=session, fid=fid)
         if courses:
-            faculty_name = courses[0][11]
+            faculty_name = courses[0][settings.FACULTY_FULLNAME_LIST_INDEX]
 
     secciones = []
     if courses:
         for course in courses:
             phile = syllabus_name(course)
-            obj = {}
-            for n,v in course.items():
-                if n in ['crs_title','firstname','lastname']:
-                    try:
-                        v = u'{}'.format(v.decode('cp1252'))
-                    except:
-                        pass
-                obj[n] = v
-            secciones.append({'obj':obj,'phile':phile})
+            secciones.append({'obj': course, 'phile': phile})
 
     # file upload
     phile = None
-    if request.method=='POST' and request.FILES:
+    if request.method == 'POST' and request.FILES:
         # complete path to directory in which we will store the file
         syllabi = request.FILES.getlist('syllabi[]')
         # POST does not include empty file fields in [] so we use this
         # hidden field and javascript event to track
         syllabih = request.POST.getlist('syllabih[]')
-        h = len(syllabi)
-        for i in range (0,len(syllabih)):
+        hidden = len(syllabi)
+        for i in range(0, len(syllabih)):
             if syllabih[i] == 'True':
-                year = request.POST.getlist('year[]')[i]
+                yr = request.POST.getlist('year[]')[i]
                 sess = request.POST.getlist('sess[]')[i]
                 crs_no = request.POST.getlist('crs_no[]')[i]
                 code = crs_no.split(' ')[0]
@@ -203,15 +201,15 @@ def home(request, dept=None, term=None, YEAR=None):
                 if DEPARTMENT_EXCEPTIONS.get(code):
                     code = DEPARTMENT_EXCEPTIONS.get(code)
                 dept = academic_department(code)
-                sendero = join(
-                    settings.UPLOADS_DIR, year, sess, dept.div_code,
-                    dept.dept_code
+                sendero = os.path.join(
+                    settings.UPLOADS_DIR, yr, sess, dept.div_code,
+                    dept.dept_code,
                 )
                 # for display at UI level
                 dept = None
-                syllabus = syllabi[len(syllabi)-h]
+                syllabus = syllabi[len(syllabi) - hidden]
                 # must be after the above
-                h -= 1
+                hidden -= 1
                 crs_title = request.POST.getlist('crs_title[]')[i]
                 filename = request.POST.getlist('phile[]')[i]
                 fullname = request.POST.getlist('fullname[]')[i]
@@ -219,41 +217,42 @@ def home(request, dept=None, term=None, YEAR=None):
                 manager = Manager()
                 # remove existing file if it exists so we can replace it
                 # with the current upload
-                s =  Search()
-                jason = s.file('{}.pdf'.format(filename), TITLE_ALT)
+                search = Search()
+                jason = search.file('{0}.pdf'.format(filename), TITLE_ALT)
                 if jason and jason[0].get('id'):
-                    uri='items/{}/'.format(jason[0].get('id'))
+                    uri = 'items/{0}/'.format(jason[0].get('id'))
                     response = manager.request(
-                        uri, 'delete'
+                        uri, 'delete',
                     )
                 phile = handle_uploaded_file(
-                    syllabus, sendero, filename
+                    syllabus, sendero, filename,
                 )
                 if phile:
-                    upload = '{}/{}'.format(sendero, phile)
+                    upload = '{0}/{1}'.format(sendero, phile)
                     # verify file type is PDF
                     mime = magic.from_file(upload, mime=True)
-                    if mime == 'application/pdf' or mime == 'application/octet-stream':
+                    mime_types = ('application/pdf', 'application/octet-stream')
+                    if mime in mime_typs:
                         # create a new parent item that will contain
                         # the uploaded file
                         item = {
                             'course_number': crs_no,
                             'title': crs_title,
                             'title_alt': phile,
-                            'year': year,
+                            'year': yr,
                             'term': sess,
-                            'fullname': fullname
+                            'fullname': fullname,
                         }
                         new_item = create_item(item)
                         # send file to DSpace
-                        uri='items/{}/bitstreams/'.format(new_item['uuid'])
+                        uri = 'items/{0}/bitstreams/'.format(new_item['uuid'])
                         response = manager.request(
-                            uri, 'post', phile, phile=upload
+                            uri, 'post', phile, phile=upload,
                         )
                         messages.add_message(
                             request, messages.SUCCESS,
                             'The file was uploaded successfully.',
-                            extra_tags='success'
+                            extra_tags='success',
                         )
                     else:
                         messages.add_message(
@@ -261,27 +260,37 @@ def home(request, dept=None, term=None, YEAR=None):
                             '''
                                 Files must be in PDF format. Please convert
                                 your file to PDF and try again.
-                            ''',
-                            extra_tags='danger'
+                            ''', extra_tags='danger',
                         )
                 else:
                     messages.add_message(
                         request, messages.ERROR,
-                        '''
+                        """
                             Something has gone awry with the upload.
                             Please try again.
-                        ''',
-                        extra_tags='danger'
+                        """, extra_tags='danger',
                     )
+
+    # years for form switcher
+    years = []
+    for yeer in reversed(range(settings.BEGIN_YEAR, TODAY.year + 2)):
+        years.append((yeer, yeer))
 
     return render(
         request, 'home.html', {
-            'depts':dept_list,'courses':secciones,'department':dept,
-            'faculty_name':faculty_name,'fid':fid,'year':YEAR,'years':YEARS,
-            'term':term,'phile':phile,'dean_chair':dean_chair,
-            'division':{'name':division_name,'code':division_code},
-            'admin':admin
-        }
+            'depts': dept_list,
+            'courses': secciones,
+            'department': dept,
+            'faculty_name': faculty_name,
+            'fid': fid,
+            'year': year,
+            'years': years,
+            'term': term,
+            'phile': phile,
+            'dean_chair': dean_chair,
+            'division': {'name': division_name, 'code': division_code},
+            'admin': admin,
+        },
     )
 
 
@@ -295,22 +304,21 @@ def dspace_file_search(request):
         name = request.POST.get('name')
 
         jason = []
-        content = ''
         if name.strip() != 'Staff':
-            s = Search()
-            jason = s.file(phile, TITLE_ALT)
+            search = Search()
+            jason = search.file(phile, TITLE_ALT)
         if jason and jason[0].get('name'):
-            earl = '{}/bitstream/handle/{}/{}?sequence=1&isAllowed=y'.format(
-                settings.DSPACE_URL, jason[0].get('handle'), phile
+            earl = '{0}/bitstream/handle/{1}/{2}?sequence=1&isAllowed=y'.format(
+                settings.DSPACE_URL, jason[0].get('handle'), phile,
             )
             response = render(
                 request, 'view_file.ajax.html', {
-                    'earl':earl,'handle':jason[0].get('handle')
-                }
+                    'earl': earl, 'handle': jason[0].get('handle'),
+                },
             )
         else:
             response = HttpResponse(
-                '', content_type='text/plain; charset=utf-8'
+                '', content_type='text/plain; charset=utf-8',
             )
     else:
         response = HttpResponseRedirect(reverse_lazy('access_denied'))
@@ -319,7 +327,7 @@ def dspace_file_search(request):
 
 
 def dspace_dept_courses(request, dept, term, year):
-    cache_key = 'DSPACE_API_{}_{}_{}'.format(dept,term,year)
+    cache_key = 'DSPACE_API_{0}_{1}_{2}'.format(dept, term, year)
     if term == 'RC':
         term = settings.SPRING_TERMS
     elif term == 'RA':
@@ -328,27 +336,27 @@ def dspace_dept_courses(request, dept, term, year):
         raise Http404
     jay = cache.get(cache_key)
     if not jay:
-        courses = sections(code=dept,year=year,sess=term)
+        courses = sections(code=dept, year=year, sess=term)
         jay = '['
         if courses:
             for c in courses:
                 if c[12] == 'Y':
                     phile = '{}.pdf'.format(syllabus_name(c))
-                    s = Search()
-                    jason = s.file(phile, TITLE_ALT)
+                    search = Search()
+                    jason = search.file(phile, TITLE_ALT)
                     earl = ''
                     if jason and jason[0].get('name'):
-                        earl = '{}/bitstream/handle/{}/{}?sequence=1&isAllowed=y'.format(
-                            settings.DSPACE_URL, jason[0].get('handle'), phile
+                        earl = '{0}/bitstream/handle/{1}/{2}?sequence=1&isAllowed=y'.format(
+                            settings.DSPACE_URL, jason[0].get('handle'), phile,
                         )
                     jay += '{'
                     # json requires doubl quotes
-                    jay += '''
+                    jay += """
                         "crs_no":"{}","earl":"{}","sess":"{}","sec_no":"{}",
                         "crs_title":"{}","fullname":"{}","need_syllabi":"{}"
-                    '''.format(
+                    """.format(
                         c.crs_no, earl, c.sess, c.sec_no,
-                        c.crs_title, c.fullname, c[12]
+                        c.crs_title, c.fullname, c[12],
                     )
                     jay += '},'
             jay = jay[:-1] + ']'
@@ -356,12 +364,12 @@ def dspace_dept_courses(request, dept, term, year):
             jay = jay + ']'
         cache.set(cache_key, jay, None)
     return HttpResponse(
-        jay, content_type='text/plain; charset=utf-8'
+        jay, content_type='text/plain; charset=utf-8',
     )
 
 
 @portal_auth_required(
-    session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied')
+    session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied'),
 )
 def download(request, division, department=None, term=None, year=None):
     response = HttpResponse(content_type='application/x-gzip')

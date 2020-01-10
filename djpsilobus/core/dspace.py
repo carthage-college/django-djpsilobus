@@ -1,55 +1,52 @@
 # -*- coding: utf-8 -*-
+
+import json
+import urllib3
+import requests
+
 from django.conf import settings
 from django.core.cache import cache
 
-import json
-import requests
-
-"""
-Suppress InsecureRequestWarning
-https://stackoverflow.com/questions/27981545/suppress-insecurerequestwarning-unverified-https-request-is-being-made-in-pytho
-"""
-import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 COOKIE_CACHE_KEY = settings.DSPACE_COOKIE_CACHE_KEY
 REST_URL = settings.DSPACE_REST_URL
 HEADERS = {
     'content-type': 'application/json',
-    'Accept': 'application/json'
+    'Accept': 'application/json',
 }
 
 
 def _get_cookie():
 
     # obtain our cookie from DSpace server
-    login_url = '{}/login'.format(REST_URL)
+    login_url = '{0}/login'.format(REST_URL)
     login_dict = {
-        'email':'{}'.format(settings.DSPACE_EMAIL),
-        'password':'{}'.format(settings.DSPACE_PASSWORD)
+        'email': '{0}'.format(settings.DSPACE_EMAIL),
+        'password': '{0}'.format(settings.DSPACE_PASSWORD),
     }
     response = requests.get(
-        url=login_url, params=login_dict, headers=HEADERS, verify=False
+        url=login_url, params=login_dict, headers=HEADERS, verify=False,
     )
     dic = response.cookies.get_dict()
     return dic['JSESSIONID']
 
+
 def _get_status(headers, cookies):
     # check cookie status
-    status = False
+    earl = '{0}/status'.format(REST_URL)
     response = requests.get(
-        '{}/status'.format(REST_URL), cookies=cookies, headers=headers, verify=False
+        earl, cookies=cookies, headers=headers, verify=False,
     )
     jason = json.loads(response.content)
-    if jason['authenticated']:
-        status = True
-    return status
+    return jason['authenticated']
 
 
 class Manager(object):
+    """Manager class for interacting with the API."""
 
     def __init__(self):
-
+        """Initialise with java session cookie from the API."""
         self.headers = HEADERS
         cookie = cache.get(COOKIE_CACHE_KEY)
         if not cookie:
@@ -95,34 +92,26 @@ class Manager(object):
 
         if phile:
             earl += '?name={}'.format(data)
-            #headers['Content-Type'] = 'application/x-www-form-urlencoded'
             headers['Content-Type'] = 'multipart/form-data'
-            #headers['accept'] = 'application/pdf'
-            #del headers['accept']
 
             with open(phile,'rb') as payload:
                 files={phile: payload}
-                #files={'file': payload}
-                #files = {
-                    #'file': (phile, payload, 'application/pdf',
-                    #{'Expires': '0'})
-                #}
-                #data = {'name': phile}
                 response = action(
                     earl, files=files, headers=headers, cookies=self.cookies,
-                    verify=False
+                    verify=False,
                 )
         elif action == 'delete':
             response = action(
-                earl, headers=headers, cookies=self.cookies, verify=False
+                earl, headers=headers, cookies=self.cookies, verify=False,
             )
         elif data:
             response = action(
-                earl, data=data, headers=headers, cookies=self.cookies, verify=False
+                earl, data=data, headers=headers, cookies=self.cookies,
+                verify=False,
             )
         else:
             response = action(
-                earl, headers=headers, cookies=self.cookies, verify=False
+                earl, headers=headers, cookies=self.cookies, verify=False,
             )
 
         try:
@@ -139,7 +128,6 @@ class Search(Manager):
         """
         Search for a file by metatag
         """
-
         req_dict = {
             'key': '{}'.format(metatag),
             'value': '{}'.format(phile),

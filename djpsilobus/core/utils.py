@@ -1,150 +1,209 @@
 # -*- coding: utf-8 -*-
-from django.conf import settings
 
-from djpsilobus.core.data import DEPARTMENTS, ITEM_METADATA
-from djpsilobus.core.dspace import Manager
-
-from djzbar.utils.informix import get_session
-from djzbar.core.models.courses import AbstractRecord
-from djzbar.constants import TERM_LIST
+"""Various utilities for interacting with the API."""
 
 import os
 import re
-import json
-import requests
 
-EARL = settings.INFORMIX_EARL
+from django.conf import settings
+from djimix.constants import TERM_LIST
+from djimix.core.database import get_connection
+from djimix.core.database import xsql
+from djpsilobus.core.data import DEPARTMENTS
+from djpsilobus.core.data import ITEM_METADATA
+from djpsilobus.core.dspace import Manager
+from djpsilobus.core.sql import SECTIONS
+
+
+def sections(code=None, year=None, sess=None, fid=None):
+    """Fetch all course sections.
+
+    Args:
+        code: a department code
+        year: YYYY
+        sess: a tuple of sessions
+        fid:  a faculty ID
+
+    Returns:
+        all courses that meet the above criteria.
+    """
+
+    where = ''
+
+    if code:
+        where += ' AND crs_rec.dept = "{0}" '.format(code)
+    if year:
+        where += ' AND sec_rec.yr = {0} '.format(year)
+    if sess:
+        where += ' AND sec_rec.sess in {0} '.format(sess)
+    if fid:
+        where += ' AND sec_rec.fac_id = {0} '.format(fid)
+
+    connection = get_connection()
+    # close connection when exiting with block
+    sql = SECTIONS(where=where)
+    with connection:
+        rows = xsql(sql, connection)
+        try:
+            return rows.fetchall()
+        except AttributeError:
+            #return None
+            return sql
+
+def division_departments(code):
+    """Fetch all departments for a division given the four letter code."""
+    sql = """
+        SELECT * FROM dept_table
+        WHERE div = '{0}' ORDER BY txt
+    """.format(code)
+
+    connection = get_connection()
+    # close connection when exiting with block
+    with connection:
+        return xsql(sql, connection).fetchall()
 
 
 def find_file(phile):
-    """
-    Using the DSpace REST API, execute a search for a file name
+    """Using the DSpace REST API, execute a search for a file name
     contained in the dc.title.alternative metadata field.
 
-    Accepts as a argument a file name.
-    Returns a json object
+    Args:
+        phile: a file name.
+
+    Returns:
+        a json object.
+
+    Raises:
+        none.
     """
 
     req_dict = {
         'key': 'dc.title.alternative',
-        'value': '{}'.format(phile),
-        'language': 'en_US'
+        'value': '{0}'.format(phile),
+        'language': 'en_US',
     }
 
     manager = Manager()
 
-    jason = manager.request(
-        'items/find-by-metadata-field', 'post', req_dict
+    return manager.request(
+        'items/find-by-metadata-field', 'post', req_dict,
     )
-
-    return jason
 
 
 def get_items(collection_id):
+    """Fetch items form the API.
+
+    Args:
+        collection_id: a collection UUID
+
+    Returns:
+        all items in that collection
+
+    Raises:
+        none.
     """
-    accepts a collection UUID and returns all items in that collection
-    """
+
     manager = Manager()
 
-    jason = manager.request(
-        'collections/{}/items'.format(collection_id), 'get'
+    return manager.request(
+        'collections/{0}/items'.format(collection_id), 'get',
     )
-
-    return jason
-
 
 
 def create_item(item):
-    """
-    Accepts a dictionary with the following keys:
-    course_number, title, year, term, fullname
+    """Create an item through the API.
+
+    Args:
+        item: a dictionary with the following keys:
+              course_number, title, year, term, fullname
+
+    Returns:
+        new_item: the newly created item
+
+    Raises:
+        none.
     """
 
-    data = ITEM_METADATA
-
-    # create database session
-    session = get_session(EARL)
+    item_data = ITEM_METADATA
 
     prefix = 'UG'
     if item['term'][0] == 'G':
         prefix = 'GR'
-    print(item)
-    print(prefix)
-    print(item['year'][-2:])
-    cat = '{}{}'.format(prefix, item['year'][-2:])
-    c = session.query(AbstractRecord).\
-        filter_by(crs_no = item['course_number']).\
-        filter_by(cat = cat).first()
-    if c and c.abstr:
-        abstr = c.abstr.split('\n')
-        if len(abstr) > 1:
-            try:
-                abstr = abstr[2].decode('cp1252', 'ignore')
-            except:
-                abstr = c.abstr.decode('cp1252', 'ignore')
-        else:
-            abstr = c.abstr.decode('cp1252', 'ignore')
+    cat = '{0}{1}'.format(prefix, item['year'][-2:])
+
+    sql = """
+        SELECT * FROM crsabstr_rec WHERE crs_no={0} AND cat={1}
+    """.fomrat(item['course_number'], cat)
+
+    connection = get_connection()
+    # close connection when exiting with block
+    with connection:
+        row = xsql(sql, connection).fetchone()
+
+    if row and row.abstr:
+        abstr = row.abstr
     else:
         abstr = ''
 
     dept = item['course_number'].split(' ')[0]
     collection_id = DEPARTMENTS[dept]
     # author
-    data['metadata'][0]['value'] = item['fullname']
+    item_data['metadata'][0]['value'] = item['fullname']
     # description
-    data['metadata'][1]['value'] = abstr
+    item_data['metadata'][1]['value'] = abstr
     # title
-    data['metadata'][2]['value'] = item['title']
+    item_data['metadata'][2]['value'] = item['title']
     # title alternative
-    data['metadata'][3]['value'] = item['title_alt']
-    # subject: year
-    data['metadata'][4]['value'] = item['year']
-    # subject: term
-    data['metadata'][5]['value'] = TERM_LIST[item['term']]
-    uri = 'collections/{}/items'.format(collection_id)
-    print(uri)
+    item_data['metadata'][3]['value'] = item['title_alt']
+    # subject year
+    item_data['metadata'][4]['value'] = item['year']
+    # subject term
+    item_data['metadata'][5]['value'] = TERM_LIST[item['term']]
+
+    uri = 'collections/{0}/items'.format(collection_id)
     manager = Manager()
-    new_item = manager.request(uri, 'post', data)
-    return new_item
+
+    return manager.request(uri, 'post', item_data)
 
 
 def syllabus_name(course):
-    """
-    Creates the syllabus name that DSpace expects and
-    which is 99.9% unique for search purposes.
-    """
-
+    """Creates the syllabus name that DSpace expects."""
     lastname = re.sub('[^0-9a-zA-Z]+', '_', course.lastname)
     firstname = re.sub('[^0-9a-zA-Z]+', '_', course.firstname)
-    return u'{}_{}_{}_{}_{}_{}_syllabus'.format(
-        course.yr, course.sess, course.crs_no.replace(' ','_'),
-        course.sec_no, lastname, firstname
+    return '{0}_{1}_{2}_{3}_{4}_{5}_syllabus'.format(
+        course.yr,
+        course.sess,
+        course.crs_no.replace(' ', '_'),
+        course.sec_no,
+        lastname,
+        firstname,
     )
 
 
 def sheet(ws, division, department, courses):
+    """Create a spread sheet."""
     # set sheet title
     ws.title = department
     # create a list for each row and insert into workbook
-    for c in courses:
+    for course in courses:
         section = []
-        for item in c:
-            # convert strings in case there are funky characters
-            if isinstance(item, str):
-                section.append(item.decode('cp1252').encode('utf-8'))
-            else:
-                section.append(item)
+        for course_item in course:
+            section.append(course_item)
 
         # check for syllabus
-        phile = syllabus_name(c)
-        path = '{}{}/{}/{}/{}/{}.pdf'.format(
-            settings.UPLOADS_DIR,c.yr,c.sess,
-            division, department,phile
+        phile = syllabus_name(course)
+        path = '{0}{1}/{2}/{3}/{4}/{5}.pdf'.format(
+            settings.UPLOADS_DIR,
+            course.yr,
+            course.sess,
+            division,
+            department,
+            phile,
         )
         if os.path.isfile(path):
-            syllabus='Yes'
+            syllabus = 'Yes'
         else:
-            syllabus='No'
+            syllabus = 'No'
 
         section.append(syllabus)
         ws.append(section)

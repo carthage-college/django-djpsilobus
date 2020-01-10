@@ -232,8 +232,8 @@ $(function(){
                   <select name="dept_faculty_{{d.dept_code}}">
                     <option value="">(Select Faculty)</option>
                     {% for f in d.faculty %}
-                      <option value="{{f.id}}">
-                        {{f.lastname}}, {{f.firstname}}
+                      <option value="{{f.0}}">
+                        {{f.1}}, {{f.2}}
                       </option>
                     {% endfor %}
                   </select>

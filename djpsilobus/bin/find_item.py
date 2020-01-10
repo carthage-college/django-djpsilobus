@@ -19,10 +19,9 @@ desc = """
 parser = argparse.ArgumentParser(description=desc)
 
 parser.add_argument(
-    "-f", "--filename",
-    required=True,
+    '-f', '--filename', required=True,
     help="The name of the file for which to search",
-    dest="phile"
+    dest='phile',
 )
 
 
@@ -35,13 +34,10 @@ def main():
 
     jason = find_file(phile)
 
-    '''
-    if jason and jason[0].get("name"):
-        print "title = {}".format(jason[0]["name"])
+    if jason and jason[0].get('name'):
+        print("title = {}".format(jason[0]['name']))
     else:
-        print jason
-    '''
-    print jason
+        print(jason)
 
 
 if __name__ == "__main__":
