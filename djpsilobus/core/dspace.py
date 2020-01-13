@@ -34,10 +34,8 @@ def _get_cookie():
 
 def _get_status(headers, cookies):
     # check cookie status
-    earl = '{0}/status'.format(REST_URL)
-    response = requests.get(
-        earl, cookies=cookies, headers=headers, verify=False,
-    )
+    url = '{0}/status'.format(REST_URL)
+    response = requests.get(url, cookies=cookies, headers=headers, verify=False)
     jason = json.loads(response.content)
     return jason['authenticated']
 
