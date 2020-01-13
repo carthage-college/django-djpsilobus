@@ -4,6 +4,7 @@
 
 import os
 import re
+import pyodbc
 
 from django.conf import settings
 from djimix.constants import TERM_LIST
@@ -131,14 +132,15 @@ def create_item(item):
         prefix = 'GR'
     cat = '{0}{1}'.format(prefix, item['year'][-2:])
 
-    sql = """
-        SELECT * FROM crsabstr_rec WHERE crs_no={0} AND cat={1}
-    """.fomrat(item['course_number'], cat)
+    sql = 'SELECT * FROM crsabstr_rec WHERE crs_no="{0}" AND cat="{1}"'.format(
+        item['course_number'], cat,
+    )
 
     connection = get_connection()
-    # close connection when exiting with block
     with connection:
-        row = xsql(sql, connection).fetchone()
+        row = xsql(sql, connection)
+        if row:
+            row = row.fetchone()
 
     if row and row.abstr:
         abstr = row.abstr
