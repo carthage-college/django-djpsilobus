@@ -232,7 +232,7 @@ def home(request, dept=None, term=None, year=None):
                     # verify file type is PDF
                     mime = magic.from_file(upload, mime=True)
                     mime_types = ('application/pdf', 'application/octet-stream')
-                    if mime in mime_typs:
+                    if mime in mime_types:
                         # create a new parent item that will contain
                         # the uploaded file
                         item = {
