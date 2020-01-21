@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import json
-import urllib3
-import requests
 
+import requests
+import urllib3
 from django.conf import settings
 from django.core.cache import cache
+
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 COOKIE_CACHE_KEY = settings.DSPACE_COOKIE_CACHE_KEY
 REST_URL = settings.DSPACE_REST_URL
-HEADERS = {
-    'content-type': 'application/json',
-    'Accept': 'application/json',
-}
 
 
 def _get_cookie():
@@ -26,16 +23,30 @@ def _get_cookie():
         'password': '{0}'.format(settings.DSPACE_PASSWORD),
     }
     response = requests.get(
-        url=login_url, params=login_dict, headers=HEADERS, verify=False,
+        url=login_url,
+        params=login_dict,
+        headers={
+            'content-type': 'application/json',
+            'Accept': 'application/json',
+        },
+        verify=False,
     )
     dic = response.cookies.get_dict()
     return dic['JSESSIONID']
 
 
-def _get_status(headers, cookies):
+def _get_status(cookies):
     # check cookie status
     url = '{0}/status'.format(REST_URL)
-    response = requests.get(url, cookies=cookies, headers=headers, verify=False)
+    response = requests.get(
+        url,
+        cookies=cookies,
+        headers={
+            'content-type': 'application/json',
+            'Accept': 'application/json',
+        },
+        verify=False,
+    )
     jason = json.loads(response.content)
     return jason['authenticated']
 
@@ -45,33 +56,41 @@ class Manager(object):
 
     def __init__(self):
         """Initialise with java session cookie from the API."""
-        self.headers = HEADERS
+        self.headers = {
+            'content-type': 'application/json',
+            'Accept': 'application/json',
+        }
         cookie = cache.get(COOKIE_CACHE_KEY)
-        if not cookie:
-            cookie = _get_cookie()
-            cache.set(COOKIE_CACHE_KEY, cookie, None)
+        if cookie:
             cookies = {'JSESSIONID': cookie}
-        else:
-            cookies = {'JSESSIONID': cookie}
-            if not _get_status(self.headers, cookies):
+            if not _get_status(cookies):
                 cookie = _get_cookie()
                 cache.set(COOKIE_CACHE_KEY, cookie, None)
                 cookies = {'JSESSIONID': cookie}
+        else:
+            cookie = _get_cookie()
+            cache.set(COOKIE_CACHE_KEY, cookie, None)
+            cookies = {'JSESSIONID': cookie}
 
         self.cookies = cookies
 
     def status(self):
-        return _get_status(self.headers, self.cookies)
+        """Returns the status of the java cookie from tomcat."""
+        return _get_status(self.cookies)
 
     def crumble(self):
+        """Deletes the java cookie from tomcat."""
         cache.delete(COOKIE_CACHE_KEY)
 
     def request(self, uri, action, req_dict=None, phile=None, headers=None):
-
+        """Handles generic requests to the REST API."""
         if not headers:
-            headers = self.headers
+            headers = {
+                'content-type': 'application/json',
+                'Accept': 'application/json',
+            }
 
-        earl = '{}/{}'.format(REST_URL, uri)
+        earl = '{0}/{1}'.format(REST_URL, uri)
         if action == 'post':
             action = requests.post
         elif action == 'get':
@@ -83,28 +102,37 @@ class Manager(object):
 
         # dictionary or string?
         if type(req_dict) is dict:
-            data = json.dumps(req_dict)
+            jason = json.dumps(req_dict)
         else:
             # collection search by name and file upload use a string
-            data = req_dict
+            jason = req_dict
 
         if phile:
-            earl += '?name={}'.format(data)
-            headers['Content-Type'] = 'multipart/form-data'
+            earl += '?name={0}'.format(jason)
+            # we need a new headers container otherwise the multipart addition
+            # interferes with the other places we use headers
+            file_headers = self.headers
+            file_headers['Content-Type'] = 'multipart/form-data'
 
-            with open(phile,'rb') as payload:
-                files={phile: payload}
+            with open(phile, 'rb') as payload:
+                files = {phile: payload}
                 response = action(
-                    earl, files=files, headers=headers, cookies=self.cookies,
+                    earl,
+                    files=files,
+                    headers=file_headers,
+                    cookies=self.cookies,
                     verify=False,
                 )
         elif action == 'delete':
             response = action(
                 earl, headers=headers, cookies=self.cookies, verify=False,
             )
-        elif data:
+        elif jason:
             response = action(
-                earl, data=data, headers=headers, cookies=self.cookies,
+                earl,
+                data=jason,
+                headers=headers,
+                cookies=self.cookies,
                 verify=False,
             )
         else:
@@ -114,33 +142,35 @@ class Manager(object):
 
         try:
             response = json.loads(response.content)
-        except:
+        except ValueError:
             response = response.content
 
         return response
 
 
 class Search(Manager):
+    """Search the REST API, which extends Manager class."""
 
     def file(self, phile, metatag):
-        """
-        Search for a file by metatag
-        """
+        """Search for a file by metatag."""
         req_dict = {
-            'key': '{}'.format(metatag),
-            'value': '{}'.format(phile),
-            'language': 'en_US'
+            'key': '{0}'.format(metatag),
+            'value': '{0}'.format(phile),
+            'language': 'en_US',
         }
 
         return self.request(
-            'items/find-by-metadata-field', 'post', req_dict
+            'items/find-by-metadata-field',
+            'post',
+            req_dict,
+            headers={
+                'content-type': 'application/json',
+                'Accept': 'application/json',
+            },
         )
 
     def collection(self, name=None):
-        """
-        Search for a collection
-        """
-
+        """Search for a collection."""
         return self.request(
-            name, 'collections/find-collection', 'post'
+            name, 'collections/find-collection', 'post',
         )

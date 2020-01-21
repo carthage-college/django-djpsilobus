@@ -52,7 +52,7 @@ ADMIN_MEDIA_PREFIX = '/static/admin/'
 MEDIA_ROOT = '{0}/assets/'.format(BASE_DIR)
 MEDIA_URL = '/media/djpsilobus/'
 STATIC_ROOT = '{0}/static/'.format(ROOT_DIR)
-STATIC_URL = 'https://{0}/static/djpsilobus/'.format(SERVER_URL)
+STATIC_URL = '/static/djpsilobus/'.format(SERVER_URL)
 UPLOADS_DIR = '{0}files/'.format(MEDIA_ROOT)
 UPLOADS_URL = '{0}files/'.format(MEDIA_URL)
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
@@ -83,6 +83,8 @@ INSTALLED_APPS = (
     'djpsilobus.core',
     # needed for template tags
     'djtools',
+    # third party apps
+    'loginas',
 )
 MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
@@ -168,6 +170,10 @@ DSPACE_JSESSIONID = ''
 DSPACE_COOKIE_CACHE_KEY = 'dspace_cookie_cache_key'
 DSPACE_URL = ''
 DSPACE_REST_URL = '{0}/rest'.format(DSPACE_URL)
+DSPACE_REST_HEADERS = {
+    'content-type': 'application/json',
+    'Accept': 'application/json'
+}
 # alternative title meta tag for searching for files
 DSPACE_TITLE_ALT = 'dc.title.alternative'
 # Registrar Administrators

@@ -326,6 +326,7 @@ def dspace_file_search(request):
     return response
 
 
+@csrf_exempt
 def dspace_dept_courses(request, dept, term, year):
     cache_key = 'DSPACE_API_{0}_{1}_{2}'.format(dept, term, year)
     if term == 'RC':
