@@ -189,6 +189,7 @@ YEAR = TODAY.year
 BEGIN_YEAR = 2016
 FALL_TERMS = ('RA', 'GA', 'AA', 'AB')
 SPRING_TERMS = ('RC', 'AG', 'AK', 'AM', 'GB', 'GC', 'RB')
+SUMMER_TERMS = ('AS', 'AT', 'GE', 'RE')
 FACULTY_FULLNAME_LIST_INDEX = 11
 # logging
 LOG_FILEPATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'logs/')
