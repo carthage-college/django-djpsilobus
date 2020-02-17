@@ -445,7 +445,7 @@ def openxml(request, division, department=None, term=None, year=None):
             TERM = get_session_term()['sess']
 
     if department:
-        courses = sections(code=department,year=YEAR,sess=TERM)
+        courses = sections(code=department,year=year,sess=TERM)
         if courses:
             sheet(template, division, department, courses)
         else:
