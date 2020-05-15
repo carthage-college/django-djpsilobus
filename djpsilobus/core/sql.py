@@ -16,7 +16,7 @@ SELECT
         WHEN
             mtg_rec.im
         IN
-            ("LX","LC","ST","TJ","ML","TS","EN","PR")
+            ("EN","LC","LX","ML","OL","PR","ST","TJ","TS")
         THEN
             'Y'
         END
