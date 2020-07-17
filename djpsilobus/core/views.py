@@ -194,6 +194,9 @@ def home(request, dept=None, term=None, year=None):
                 yr = request.POST.getlist('year[]')[i]
                 sess = request.POST.getlist('sess[]')[i]
                 crs_no = request.POST.getlist('crs_no[]')[i]
+                filename = request.POST.getlist('phile[]')[i]
+                crs_title = request.POST.getlist('crs_title[]')[i]
+                fullname = request.POST.getlist('fullname[]')[i]
                 code = crs_no.split(' ')[0]
                 # chapuza for now until we can figure out what to do
                 # with department codes that do not translate to actual
@@ -205,29 +208,28 @@ def home(request, dept=None, term=None, year=None):
                     settings.UPLOADS_DIR, yr, sess, dept.div_code,
                     dept.dept_code,
                 )
-                # for display at UI level
-                dept = None
-                syllabus = syllabi[len(syllabi) - hidden]
+                try:
+                    phile = handle_uploaded_file(
+                        syllabi[len(syllabi) - hidden], sendero, filename,
+                    )
+                except Exception:
+                    phile = None
                 # must be after the above
                 hidden -= 1
-                crs_title = request.POST.getlist('crs_title[]')[i]
-                filename = request.POST.getlist('phile[]')[i]
-                fullname = request.POST.getlist('fullname[]')[i]
-                # create our DSpace manager
-                manager = Manager()
-                # remove existing file if it exists so we can replace it
-                # with the current upload
-                search = Search()
-                jason = search.file('{0}.pdf'.format(filename), TITLE_ALT)
-                if jason and jason[0].get('id'):
-                    uri = 'items/{0}/'.format(jason[0].get('id'))
-                    response = manager.request(
-                        uri, 'delete',
-                    )
-                phile = handle_uploaded_file(
-                    syllabus, sendero, filename,
-                )
                 if phile:
+                    # for display at UI level
+                    dept = None
+                    # create our DSpace manager
+                    manager = Manager()
+                    # remove existing file if it exists so we can replace it
+                    # with the current upload
+                    search = Search()
+                    jason = search.file('{0}.pdf'.format(filename), TITLE_ALT)
+                    if jason and jason[0].get('id'):
+                        uri = 'items/{0}/'.format(jason[0].get('id'))
+                        response = manager.request(
+                            uri, 'delete',
+                        )
                     upload = '{0}/{1}'.format(sendero, phile)
                     # verify file type is PDF
                     mime = magic.from_file(upload, mime=True)
