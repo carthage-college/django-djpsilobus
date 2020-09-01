@@ -35,6 +35,7 @@ DEPARTMENTS = {
     'ENV': 'b49790d1-a0e3-4fe2-86da-6a525ab84207',   # Environmental Science
     '_ENV': 'b49790d1-a0e3-4fe2-86da-6a525ab84207',  # Environmental Science
     'EXS': '17c0b1cb-3a61-42a3-a80c-7e4dfe61d44b',   # Exercise & Sport Science
+    'AHS': '17c0b1cb-3a61-42a3-a80c-7e4dfe61d44b',   # Allied Health Science (major in EXS department)
     'FAC': 'Finance and Accounting',                 # Sub-Community
     'FAR': 'b405e986-37f6-42cc-98de-8a3ee616491c',   # Fine Arts
     'FIN': 'dbb13442-673d-46b3-8d41-5ac2684607a8',   # Finance
@@ -92,6 +93,7 @@ DEPARTMENTS = {
 # each name maps to a value that should be used as the Department code
 # e.g. FRN (French) is an MLA (Modern Languages) Department
 DEPARTMENT_EXCEPTIONS = {
+    'AHS': 'EXS',
     'ESN': '_ESN',
     'MGT': 'MMK',
     'ARH': 'ART',
