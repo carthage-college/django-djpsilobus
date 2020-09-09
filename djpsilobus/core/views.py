@@ -197,7 +197,8 @@ def home(request, dept=None, term=None, year=None):
                 filename = request.POST.getlist('phile[]')[i]
                 crs_title = request.POST.getlist('crs_title[]')[i]
                 fullname = request.POST.getlist('fullname[]')[i]
-                code = crs_no.split(' ')[0]
+                #code = crs_no.split(' ')[0]
+                code = crs_no[:4].strip()
                 # chapuza for now until we can figure out what to do
                 # with department codes that do not translate to actual
                 # departments

@@ -147,7 +147,7 @@ def create_item(item):
     else:
         abstr = ''
 
-    dept = item['course_number'].split(' ')[0]
+    dept = item['course_number'][:4].strip()
     collection_id = DEPARTMENTS[dept]
     # author
     item_data['metadata'][0]['value'] = item['fullname']

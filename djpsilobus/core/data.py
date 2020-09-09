@@ -30,6 +30,7 @@ DEPARTMENTS = {
     'DNC': '6d82a5e7-deab-4929-9502-14b3898f5b61',   # Dance = Theatre
     'ECN': 'f17a0469-7407-4871-8e42-88095fe666d8',   # Economics
     'EDU': '17b90ea0-efaa-4eac-b37c-0bb30e4a5267',   # Education
+    'EDUC': '17b90ea0-efaa-4eac-b37c-0bb30e4a5267',  # Education
     'ENG': '26028861-1bbd-4508-b87b-e2644db6c5ff',   # English
     'ENRC': 'Enrichment',                            # Enrichment
     'ENV': 'b49790d1-a0e3-4fe2-86da-6a525ab84207',   # Environmental Science
@@ -95,6 +96,7 @@ DEPARTMENTS = {
 DEPARTMENT_EXCEPTIONS = {
     'AHS': 'EXS',
     'ESN': '_ESN',
+    'EDUC': 'EDU',
     'MGT': 'MMK',
     'ARH': 'ART',
     'JPN': 'MLA',
