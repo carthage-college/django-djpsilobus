@@ -27,7 +27,7 @@ DEPARTMENTS = {
     '_CRJ': 'd9d0f474-c5b3-44cd-a61b-98e8b4bb909b',  # Criminal Justice Program
     'DIS': 'Discovery Program',                      # Discovery Program
     '_DIS': 'Discovery Program',                     # Discovery Program
-    'DNC': '6d82a5e7-deab-4929-9502-14b3898f5b61',   # Dance = Theatre
+    'DNC': 'b8fc6ec1-3269-4ab2-bf36-dcdf8f1d6b1c',   # Dance
     'ECN': 'f17a0469-7407-4871-8e42-88095fe666d8',   # Economics
     'EDU': '17b90ea0-efaa-4eac-b37c-0bb30e4a5267',   # Education
     'EDUC': '17b90ea0-efaa-4eac-b37c-0bb30e4a5267',  # Education
