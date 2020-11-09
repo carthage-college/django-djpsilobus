@@ -1,4 +1,4 @@
-django==2.2.14
+django==2.2.17
 django-loginas==0.3.8
 requests==2.22.0
 python-magic==0.4.15
@@ -7,7 +7,7 @@ python-ldap==3.2.0
 pyodbc==4.0.27
 openpyxl==3.0.2
 pycryptodome==3.9.4
-cryptography==3.0
+cryptography==3.2
 python-memcached==1.59
 wemake-python-styleguide==0.13.3
 
