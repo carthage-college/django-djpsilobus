@@ -17,9 +17,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
+from djauth.decorators import portal_auth_required
 from djimix.core.database import get_connection
 from djimix.core.database import xsql
-from djimix.decorators.auth import portal_auth_required
 from djimix.people.departments import academic_department
 from djimix.people.departments import chair_departments
 from djimix.people.departments import department_faculty
@@ -298,7 +298,7 @@ def home(request, dept=None, term=None, year=None):
 
 
 @portal_auth_required(
-    session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied')
+    session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied'),
 )
 @csrf_exempt
 def dspace_file_search(request):
@@ -422,7 +422,7 @@ def download(request, division, department=None, term=None, year=None):
 
 
 @portal_auth_required(
-    session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied')
+    session_var='DSPILOBUS_AUTH', redirect_url=reverse_lazy('access_denied'),
 )
 def openxml(request, division, department=None, term=None, year=None):
 

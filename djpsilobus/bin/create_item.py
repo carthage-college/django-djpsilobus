@@ -2,7 +2,7 @@
 import os, sys
 
 # env
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djpsilobus.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djpsilobus.settings.shell')
 
 import django
 
