@@ -122,8 +122,7 @@ def home(request, dept=None, term=None, year=None):
         admin = True
 
         sql = '{0} ORDER BY dept_table.txt'.format(ACADEMIC_DEPARTMENTS)
-        connection = get_connection()
-        with connection:
+        with get_connection() as connection:
             rows = xsql(sql, connection).fetchall()
 
         depts = OrderedDict()

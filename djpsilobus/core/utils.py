@@ -40,10 +40,9 @@ def sections(code=None, year=None, sess=None, fid=None):
     if fid:
         where += ' AND sec_rec.fac_id = {0} '.format(fid)
 
-    connection = get_connection()
     # close connection when exiting with block
     sql = SECTIONS(where=where)
-    with connection:
+    with get_connection() as connection:
         rows = xsql(sql, connection)
         try:
             return rows.fetchall()
@@ -57,10 +56,7 @@ def division_departments(code):
         SELECT * FROM dept_table
         WHERE div = '{0}' ORDER BY txt
     """.format(code)
-
-    connection = get_connection()
-    # close connection when exiting with block
-    with connection:
+    with get_connection() as connection:
         return xsql(sql, connection).fetchall()
 
 
@@ -136,8 +132,7 @@ def create_item(item):
         item['course_number'], cat,
     )
 
-    connection = get_connection()
-    with connection:
+    with get_connection() as connection:
         row = xsql(sql, connection)
         if row:
             row = row.fetchone()

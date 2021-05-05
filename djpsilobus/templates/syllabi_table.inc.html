@@ -27,6 +27,8 @@
     {% spaceless %}
     {% if c.obj.sess == 'RB' %}
         J-Term
+    {% else %}{% if c.obj.sess == 'RD' %}
+        M-Term
     {% else %}{% if c.obj.sess == 'AG' or c.obj.sess == 'GB' %}
         Winter
     {% else %}{% if c.obj.sess == 'RC' or c.obj.sess == 'AK' or c.obj.sess == 'AM' or c.obj.sess == 'GC' %}
@@ -37,7 +39,7 @@
         Fall
     {% else %}
         {{c.obj.sess}}
-    {% endif %}{% endif %}{% endif %}{% endif %}{% endif %}
+    {% endif %}{% endif %}{% endif %}{% endif %}{% endif %}{% endif %}
     {% endspaceless %}
     </td>
     <td>{{c.obj.fullname}}</td>
