@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+# see:
+# https://github.com/carthage-college/django-djpsilobus/blob/2841d7aa2e9a7e41fcbfd12533f3266b1966778b/djpsilobus/core/data.py
+# for last stable version of this file before the archivist moved all of the collections
+# around and all of the collection IDs changed as a result.
+#
+
 DIVISIONS = {
     'ACPR': 'All College Programs',
     'ARHU': 'Arts and Humanities',
@@ -9,7 +15,8 @@ DIVISIONS = {
 DEPARTMENTS = {
     'ACC': 'b4cc11fa-a628-4640-a6e2-9ed3c71cb034',   # Accounting
     'AFR': '5de10907-54b1-4067-9a2b-3108bf013534',   # African Studies
-    'AHS': '21e9a99f-2c4e-4f22-8adb-16b039c1209c4',   # Allied Health Science
+    'AHS': '1bca3f3f-fccb-4e31-a688-e25b5ae09f2b',   # Allied Health Science (major in EXS department)
+    #'AHS': '21e9a99f-2c4e-4f22-8adb-16b039c1209c4',   # Allied Health Science
     'ART': '0e8724db-2d2b-4eb7-8c33-080817c8432b',   # Art
     'ARH': '0cf2bd73-5d8d-47fc-a98a-5bc2ba149941',   # Art History
     'ASN': '650cb058-c518-42eb-b31f-3344e3903fd4',   # Asian Studies
@@ -30,7 +37,8 @@ DEPARTMENTS = {
     '_CRJ': '73b6452b-8cce-476f-8648-1caa277d147d',   # Criminal Justice
     'DIS': 'Discovery Program',                      # Discovery Program
     '_DIS': 'Discovery Program',                     # Discovery Program
-    'DNC': 'aa059008-1cff-4846-901a-5b774a8dfef9',   # Dance
+    #'DNC': 'aa059008-1cff-4846-901a-5b774a8dfef9',   # Dance
+    'DNC': 'b8269663-1155-4ab9-994d-3b9c664fb5bb',   # Dance (major in theatre dept)
     'ECN': '54ef63b3-d80d-4267-8421-e9358dea4187',   # Economics
     'EDU': 'c72ad5e9-363d-48b5-a254-6802876e7a21',   # Education
     'EGR': '86f61367-10fd-425d-b5f4-f816a408ef65',   # Engineering Science
