@@ -95,8 +95,11 @@ DEPARTMENTS = {
     '_WMG': 'e352433f-b40b-4a14-ad84-9ce95d4f7a41',   # Women's and Gender Studies
 }
 # each name maps to a value that should be used as the Department code
-# e.g. FRN (French) is an MLA (Modern Languages) Department
-# used only for file paths and where to store the file locally
+# e.g. FRN (French) is an MLA (Modern Languages) Department.
+# used only for file paths and where to store the file locally.
+# see ~207 line number: sendero = os.path.join()
+# we should remove this bit of code since we really do not need to store
+# the files locally.
 DEPARTMENT_EXCEPTIONS = {
     'AHS': 'EXS',
     'COR': '_WHE',
