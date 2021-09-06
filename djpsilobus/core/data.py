@@ -17,8 +17,8 @@ DEPARTMENTS = {
     'AFR': '5de10907-54b1-4067-9a2b-3108bf013534',   # African Studies
     'AHS': '1bca3f3f-fccb-4e31-a688-e25b5ae09f2b',   # Allied Health Science (major in EXS department)
     #'AHS': '21e9a99f-2c4e-4f22-8adb-16b039c1209c4',   # Allied Health Science
-    'ART': '0e8724db-2d2b-4eb7-8c33-080817c8432b',   # Art
     'ARH': '0cf2bd73-5d8d-47fc-a98a-5bc2ba149941',   # Art History
+    'ART': '0e8724db-2d2b-4eb7-8c33-080817c8432b',   # Art
     'ASN': '650cb058-c518-42eb-b31f-3344e3903fd4',   # Asian Studies
     '_ASN': '650cb058-c518-42eb-b31f-3344e3903fd4',   # Asian Studies
     'ATH': 'd3316ea5-11a1-495d-bc38-760ba223042e',   # Athletic Training
@@ -37,7 +37,6 @@ DEPARTMENTS = {
     '_CRJ': '73b6452b-8cce-476f-8648-1caa277d147d',   # Criminal Justice
     'DIS': 'Discovery Program',                      # Discovery Program
     '_DIS': 'Discovery Program',                     # Discovery Program
-    #'DNC': 'aa059008-1cff-4846-901a-5b774a8dfef9',   # Dance
     'DNC': 'b8269663-1155-4ab9-994d-3b9c664fb5bb',   # Dance (major in theatre dept)
     'ECN': '54ef63b3-d80d-4267-8421-e9358dea4187',   # Economics
     'EDU': 'c72ad5e9-363d-48b5-a254-6802876e7a21',   # Education
@@ -47,6 +46,7 @@ DEPARTMENTS = {
     '_ENV': '25c88996-ba22-403d-8193-953660142df1',   # Environmental Science
     'EXS': '1bca3f3f-fccb-4e31-a688-e25b5ae09f2b',   # Exercise and Sport Science
     'FAC': 'Finance and Accounting',                 # Sub-Community
+    'FAR': '0e8724db-2d2b-4eb7-8c33-080817c8432b',   # Fine Arts (sub of Art)
     'FIN': '3b86d78f-cda2-4721-9b23-d3c4101da98d',   # Finance
     'FRN': 'd2b861a4-5b17-4c20-bc6b-4092a1d3bb2b',   # French
     'GBL': 'a97cfedb-8ab6-4f9c-aabb-1a1672cb51ac',   # Global Heritage Program
