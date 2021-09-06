@@ -89,7 +89,6 @@ DEPARTMENTS = {
     'SOC': '4f50e65a-5a0e-4141-8620-bef33fbd6101',   # Sociology
     'SPN': 'cc6cc373-6bb6-43d9-9822-7362c0af337e',   # Spanish
     'THR': 'b8269663-1155-4ab9-994d-3b9c664fb5bb',   # Theatre
-    'COR': '88cc91a4-8004-4513-8446-7b12ee1becde',   # Western Heritage Program
     'WHE': '88cc91a4-8004-4513-8446-7b12ee1becde',   # Western Heritage Program
     '_WHE': '88cc91a4-8004-4513-8446-7b12ee1becde',  # Western Heritage Program
     'WMG': 'e352433f-b40b-4a14-ad84-9ce95d4f7a41',   # Women's and Gender Studies
@@ -97,8 +96,10 @@ DEPARTMENTS = {
 }
 # each name maps to a value that should be used as the Department code
 # e.g. FRN (French) is an MLA (Modern Languages) Department
+# used only for file paths and where to store the file locally
 DEPARTMENT_EXCEPTIONS = {
     'AHS': 'EXS',
+    'COR': '_WHE',
     'ESN': '_ESN',
     'EDUC': 'EDU',
     'MGT': 'MMK',
@@ -126,7 +127,6 @@ DEPARTMENT_EXCEPTIONS = {
     'GBL': '_GBL',
     'CRJ': '_CRJ',
     'ATH': '_ATH',
-    'COR': '_WHE',
     'GNR': '_GNR',
     'DNC': 'THR',
     'ENV': '_ENV',
