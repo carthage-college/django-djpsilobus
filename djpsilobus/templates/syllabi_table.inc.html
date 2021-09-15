@@ -1,23 +1,4 @@
 {% load filters %}
-{% comment %}
-    AA  Fall I  UNDG
-    AB  Fall II     UNDG
-    AG  Winter  UNDG
-    AK  Spring I    UNDG
-    AM  Spring II   UNDG
-    AS  Summer I    UNDG
-    AT  Summer II   UNDG
-
-    GA  Fall Graduate   GRAD
-    GB  Winter Graduate     GRAD
-    GC  Spring Graduate     GRAD
-    GE  Summer Graduate     GRAD
-
-    RA  Fall    UNDG
-    RB  J-Term  UNDG
-    RC  Spring  UNDG
-    RE  Summer  UNDG
-{% endcomment %}
 {% for c in courses %}
   <tr>
     <td>{{c.obj.crs_no}}</td>

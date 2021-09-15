@@ -3,6 +3,7 @@
 """Views for all operations."""
 
 import datetime
+import logging
 import os
 import tarfile
 from collections import OrderedDict
@@ -40,27 +41,6 @@ from openpyxl.writer.excel import save_virtual_workbook
 TODAY = settings.TODAY
 # alternative title meta tag for searching for files
 TITLE_ALT = settings.DSPACE_TITLE_ALT
-
-"""
-Key for Term codes.
-AA  Fall I  UNDG
-AB  Fall II     UNDG
-AG  Winter  UNDG
-AK  Spring I    UNDG
-AM  Spring II   UNDG
-AS  Summer I    UNDG
-AT  Summer II   UNDG
-
-GA  Fall Graduate   GRAD
-GB  Winter Graduate     GRAD
-GC  Spring Graduate     GRAD
-GE  Summer Graduate     GRAD
-
-RA  Fall    UNDG
-RB  J-Term  UNDG
-RC  Spring  UNDG
-RE  Summer  UNDG
-"""
 
 
 def get_session_term():
@@ -118,9 +98,9 @@ def home(request, dept=None, term=None, year=None):
     faculty_name = None
     courses = None
     # fetch our departments
-    if uid in settings.ADMINISTRATORS:
+    aids = settings.ADMINISTRATORS + settings.ADMIN_ASSISTANTS
+    if uid in aids:
         admin = True
-
         sql = '{0} ORDER BY dept_table.txt'.format(ACADEMIC_DEPARTMENTS)
         with get_connection() as connection:
             rows = xsql(sql, connection).fetchall()
@@ -196,7 +176,6 @@ def home(request, dept=None, term=None, year=None):
                 filename = request.POST.getlist('phile[]')[i]
                 crs_title = request.POST.getlist('crs_title[]')[i]
                 fullname = request.POST.getlist('fullname[]')[i]
-                #code = crs_no.split(' ')[0]
                 code = crs_no[:4].strip()
                 # chapuza for now until we can figure out what to do
                 # with department codes that do not translate to actual
@@ -205,7 +184,10 @@ def home(request, dept=None, term=None, year=None):
                     code = DEPARTMENT_EXCEPTIONS.get(code)
                 dept = academic_department(code)
                 sendero = os.path.join(
-                    settings.UPLOADS_DIR, yr, sess, dept.div_code,
+                    settings.UPLOADS_DIR,
+                    yr,
+                    sess,
+                    dept.div_code,
                     dept.dept_code,
                 )
                 try:
@@ -225,11 +207,11 @@ def home(request, dept=None, term=None, year=None):
                     # with the current upload
                     search = Search()
                     jason = search.file('{0}.pdf'.format(filename), TITLE_ALT)
-                    if jason and jason[0].get('id'):
-                        uri = 'items/{0}/'.format(jason[0].get('id'))
-                        response = manager.request(
-                            uri, 'delete',
-                        )
+                    if len(jason) > 1:
+                        jason = jason[-1:]
+                    if jason and jason[0].get('uuid'):
+                        uri = 'items/{0}/'.format(jason[0].get('uuid'))
+                        response = manager.request(uri, 'delete')
                     upload = '{0}/{1}'.format(sendero, phile)
                     # verify file type is PDF
                     mime = magic.from_file(upload, mime=True)
@@ -248,7 +230,7 @@ def home(request, dept=None, term=None, year=None):
                         new_item = create_item(item)
                         # send file to DSpace
                         uri = 'items/{0}/bitstreams/'.format(new_item['uuid'])
-                        response = manager.request(
+                        manager.request(
                             uri, 'post', phile, phile=upload,
                         )
                         messages.add_message(
@@ -301,14 +283,16 @@ def home(request, dept=None, term=None, year=None):
 )
 @csrf_exempt
 def dspace_file_search(request):
+    """Search the API for a file via ajax POST from the home dashboard."""
     if request.method == 'POST':
         phile = request.POST.get('phile')
         name = request.POST.get('name')
-
         jason = []
         if name.strip() != 'Staff':
             search = Search()
             jason = search.file(phile, TITLE_ALT)
+            if len(jason) > 1:
+                jason = jason[-1:]
         if jason and jason[0].get('name'):
             earl = '{0}/bitstream/handle/{1}/{2}?sequence=1&isAllowed=y'.format(
                 settings.DSPACE_URL, jason[0].get('handle'), phile,
