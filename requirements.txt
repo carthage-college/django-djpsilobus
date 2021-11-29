@@ -3,7 +3,7 @@ django-loginas==0.3.8
 requests==2.22.0
 python-magic==0.4.15
 mysqlclient==1.4.6
-python-ldap==3.2.0
+python-ldap==3.4.0
 pyodbc==4.0.27
 openpyxl==3.0.2
 pycryptodome==3.9.4
