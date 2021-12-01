@@ -6,18 +6,18 @@ import datetime
 import os
 
 # sqlserver connection string
+from djimix.settings.local import DBSERVERNAME
+from djimix.settings.local import INFORMIX_ODBC
+from djimix.settings.local import INFORMIX_ODBC_TRAIN
+from djimix.settings.local import INFORMIXDIR
+from djimix.settings.local import INFORMIXSERVER
+from djimix.settings.local import INFORMIXSQLHOSTS
+from djimix.settings.local import LD_LIBRARY_PATH
+from djimix.settings.local import LD_RUN_PATH
 from djimix.settings.local import MSSQL_EARL
-from djimix.settings.local import INFORMIX_ODBC, INFORMIX_ODBC_TRAIN
-from djimix.settings.local import (
-    INFORMIXSERVER,
-    DBSERVERNAME,
-    INFORMIXDIR,
-    ODBCINI,
-    ONCONFIG,
-    INFORMIXSQLHOSTS,
-    LD_LIBRARY_PATH,
-    LD_RUN_PATH,
-)
+from djimix.settings.local import ODBCINI
+from djimix.settings.local import ONCONFIG
+
 
 TODAY = datetime.date.today()
 # Debug
@@ -40,19 +40,20 @@ USE_L10N = False
 USE_TZ = False
 DEFAULT_CHARSET = 'utf-8'
 FILE_CHARSET = 'utf-8'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT_DIR = os.path.dirname(__file__)
+PROJECT_APP = os.path.basename(BASE_DIR)
 SERVER_URL = ''
 API_URL = '{0}/{1}'.format(SERVER_URL, 'api')
 LIVEWHALE_API_URL = 'https://{0}'.format(SERVER_URL)
-ROOT_URL = '/library/archives/djpsilobus/'
+ROOT_URL = '/{0}/'.format(PROJECT_APP)
 ROOT_URLCONF = 'djpsilobus.urls'
 WSGI_APPLICATION = 'djpsilobus.wsgi.application'
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-ROOT_DIR = os.path.dirname(__file__)
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 MEDIA_ROOT = '{0}/assets/'.format(BASE_DIR)
-MEDIA_URL = '/media/djpsilobus/'
+MEDIA_URL = '/media/{0}/'.format(PROJECT_APP)
 STATIC_ROOT = '{0}/static/'.format(ROOT_DIR)
-STATIC_URL = '/static/djpsilobus/'.format(SERVER_URL)
+STATIC_URL = '/static/{0}/'.format(PROJECT_APP)
 UPLOADS_DIR = '{0}files/'.format(MEDIA_ROOT)
 UPLOADS_URL = '{0}files/'.format(MEDIA_URL)
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
@@ -90,7 +91,7 @@ INSTALLED_APPS = (
 MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -164,7 +165,7 @@ DEFAULT_FROM_EMAIL = ''
 SERVER_EMAIL = ''
 SERVER_MAIL = ''
 # security
-CSRF_COOKIE_SECURE = True
+#CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -294,3 +295,27 @@ LOGGING = {
         },
     },
 }
+# app constants
+MANAGERS_GROUP = 'Managers'
+
+##################
+# LOCAL SETTINGS #
+##################
+
+# Allow any settings to be defined in local.py which should be
+# ignored in your version control system allowing for settings to be
+# defined per machine.
+
+# Instead of doing "from .local import *", we use exec so that
+# local has full access to everything defined in this module.
+# Also force into sys.modules so it's visible to Django's autoreload.
+
+phile = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'local.py')
+if os.path.exists(phile):
+    import imp
+    import sys
+    module_name = '{0}.settings.local'.format(PROJECT_APP)
+    module = imp.new_module(module_name)
+    module.__file__ = phile
+    sys.modules[module_name] = module
+    exec(open(phile, 'rb').read())

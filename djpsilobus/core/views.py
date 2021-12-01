@@ -102,8 +102,14 @@ def home(request, dept=None, term=None, year=None):
     if uid in aids:
         admin = True
         sql = '{0} ORDER BY dept_table.txt'.format(ACADEMIC_DEPARTMENTS)
-        with get_connection() as connection:
-            rows = xsql(sql, connection).fetchall()
+        rows = []
+        with get_connection(earl=settings.INFORMIX_ODBC, encoding=True) as connection:
+            results = xsql(sql, connection)
+            if results:
+                rows = results.fetchall()
+        #results = xsql(sql)
+        #if results:
+            #rows = results.fetchall()
 
         depts = OrderedDict()
         for row in rows:
