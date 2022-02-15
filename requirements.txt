@@ -1,4 +1,4 @@
-django==2.2.24
+django==3.2.12
 django-loginas>=0.3.10
 requests>=2.26.0
 python-magic>=0.4.24
