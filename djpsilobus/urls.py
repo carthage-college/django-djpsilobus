@@ -17,6 +17,8 @@ handler500 = 'djtools.views.errors.server_error'
 
 
 urlpatterns = [
+    # login as
+    path('admin/', include('loginas.urls')),
     # django admin
     path('admin/', admin.site.urls),
     # auth
@@ -94,6 +96,5 @@ urlpatterns = [
     path('<str:dept>/<str:term>/<int:year>/', views.home, name='home_all'),
     path('<str:dept>', views.home, name='home_dept'),
     path('', views.home, name='home'),
-    path('admin/', include('loginas.urls')),
 ]
 
